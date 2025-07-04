@@ -29,7 +29,7 @@
         }
 
         .logo-login {
-            width: 80px;
+            width: 60px;
             margin-bottom: 1rem;
         }
 
@@ -72,35 +72,12 @@
             margin-top: 1rem;
             font-size: 0.9rem;
         }
-        
-        /* Placeholder si el logo no carga */
-        .logo-placeholder {
-            background: #3f72af;
-            color: white;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
 <div class="login-container">
-    <!-- Logo con URL absoluta de GitHub -->
-    <img src="https://raw.githubusercontent.com/tu-usuario/tu-repositorio/main/img/logo.png" 
-         alt="Logo HGT Tour" 
-         class="logo-login"
-         onerror="this.style.display='none'; document.getElementById('logo-placeholder').style.display='flex';">
-    
-    <!-- Placeholder que se muestra si el logo falla -->
-    <div id="logo-placeholder" class="logo-placeholder" style="display: none;">
-        HGT
-    </div>
-    
+    <!-- Logo agregado -->
+    <img src="img/logo2.png" alt="Logo HGT Tour" class="logo-login">
     <h2>Iniciar Sesión</h2>
     <input type="text" id="username" placeholder="Usuario">
     <input type="password" id="password" placeholder="Contraseña">
@@ -108,6 +85,28 @@
     <div id="message" class="error"></div>
 </div>
 
+<script>
+    const usuarioValido = {
+        usuario: "Hugo Muñoz",
+        contraseña: "230304"
+    };
+
+    const loginButton = document.getElementById('loginButton');
+    const messageDiv = document.getElementById('message');
+
+    loginButton.addEventListener('click', () => {
+        const usuarioIngresado = document.getElementById('username').value.trim();
+        const contraseñaIngresada = document.getElementById('password').value.trim();
+
+        if (usuarioIngresado === usuarioValido.usuario && contraseñaIngresada === usuarioValido.contraseña) {
+            window.location.href = "menu.html";
+        } else {
+            messageDiv.textContent = "Usuario o contraseña incorrectos.";
+        }
+    });
+</script>
+</body>
+</html>
 <script>
     const usuarioValido = {
         usuario: "Hugo Muñoz",
