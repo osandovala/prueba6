@@ -72,12 +72,35 @@
             margin-top: 1rem;
             font-size: 0.9rem;
         }
+        
+        /* Placeholder si el logo no carga */
+        .logo-placeholder {
+            background: #3f72af;
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 <div class="login-container">
-    <!-- Logo - Debe estar en img/logo.png -->
-    <img src="img/logo2.png" alt="Logo HGT Tour" class="logo-login">
+    <!-- Logo con URL absoluta de GitHub -->
+    <img src="https://raw.githubusercontent.com/tu-usuario/tu-repositorio/main/img/logo.png" 
+         alt="Logo HGT Tour" 
+         class="logo-login"
+         onerror="this.style.display='none'; document.getElementById('logo-placeholder').style.display='flex';">
+    
+    <!-- Placeholder que se muestra si el logo falla -->
+    <div id="logo-placeholder" class="logo-placeholder" style="display: none;">
+        HGT
+    </div>
+    
     <h2>Iniciar Sesión</h2>
     <input type="text" id="username" placeholder="Usuario">
     <input type="password" id="password" placeholder="Contraseña">
