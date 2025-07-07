@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Mantenimiento Preventivo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --color-primary: #3f72af;
+      --color-secondary: #dbe2ef;
+      --color-text: #112d4e;
+      --color-accent: #2c5282;
+      --color-success: #2ecc71;
+      --color-error: #e74c3c;
+      --border-radius: 10px;
+      --box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      min-height: 100vh;
+      padding: 30px;
+      color: var(--color-text);
+    }
+
+    .form-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      max-width: 900px;
+      width: 100%;
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--color-primary);
+      margin-bottom: 25px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .col {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .section {
+      border: 1px solid var(--color-secondary);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-top: 15px;
+      background-color: #f0f4fa;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      background: var(--color-primary);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.95rem;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: var(--color-accent);
+    }
+
+    .icon-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    .icon-button img {
+      width: 45px;
+    }
+
+    .center {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    @media (max-width: 768px) {
+      .row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Registro de Mantenimiento Preventivo</h2>
+
+    <div class="row">
+      <div class="col">
+        <label>Fecha:</label>
+        <input type="date" id="fecha" value="2025-07-07">
+      </div>
+      <div class="col">
+        <label>Hora:</label>
+        <input type="time" id="hora" value="08:41">
+      </div>
+      <div class="col">
+        <label>Máquina (Patente):</label>
+        <select id="select-maquina">
+          <option>Cargando...</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>Fecha cierre entrega:</label>
+        <input type="date" id="fecha-cierre" value="2025-07-07">
+      </div>
+      <div class="col">
+        <label>Kilometraje:</label>
+        <input type="number" id="kilometraje" value="0">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label>Responsable:</label>
+        <select id="responsable">
+          <option>Seleccione</option>
+        </select>
+
+        <label>Descripción de Mantenimiento:</label>
+        <textarea rows="4" id="descripcion"></textarea>
+
+        <div class="section">
+          <label>¿Realizado?</label>
+          <div class="radio-group">
+            <label><input type="radio" name="realizado" value="sí"> Sí</label>
+            <label><input type="radio" name="realizado" value="no" checked> No</label>
+          </div>
+
+          <label>Tiempo de Mantenimiento (horas):</label>
+          <input type="number" id="tiempo" value="0">
+        </div>
+
+        <label>Hecho por:</label>
+        <input type="text" id="hecho-por">
+
+        <label>Autorizado por:</label>
+        <input type="text" id="autorizado-por">
+      </div>
+    </div>
+
+    <div class="center">
+      <button class="icon-button" title="Guardar">
+        <img src="https://cdn-icons-png.flaticon.com/512/84/84380.png" alt="Guardar">
+      </button>
+      <button class="icon-button" title="Volver" onclick="location.href='mantenimientos.html'">
+        <img src="https://cdn-icons-png.flaticon.com/512/109/109618.png" alt="Volver">
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Configuración Supabase
+    const SUPABASE_URL = 'https://cswjdvjlfztewtmkrxsh.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzd2pkdmpsZnp0ZXd0bWtyeHNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2NDg0ODEsImV4cCI6MjA2NzIyNDQ4MX0.z0C2PtfkvYwIYfFjnFmdRicn_Jfqyq_SbCHKycHBX-4';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Cargar lista de patentes desde Supabase
+    async function cargarPatentes() {
+      const selectMaquina = document.getElementById('select-maquina');
+      const { data, error } = await supabase
+        .from('maquinas')
+        .select('patente');
+
+      if (error) {
+        console.error('Error al cargar patentes:', error.message);
+        selectMaquina.innerHTML = '<option>Error al cargar</option>';
+        return;
+      }
+
+      selectMaquina.innerHTML = '<option value="">Seleccione una máquina</option>';
+      data.forEach(maquina => {
+        const opt = document.createElement('option');
+        opt.value = maquina.patente;
+        opt.textContent = maquina.patente;
+        selectMaquina.appendChild(opt);
+      });
+    }
+
+    cargarPatentes();
+  </script>
+</body>
+</html>
+
+
