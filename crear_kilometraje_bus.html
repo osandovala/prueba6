@@ -275,7 +275,7 @@
       <div class="col">
         <label for="select-maquina" class="required-field">Bus (Patente):</label>
         <select id="select-maquina" required>
-          <option value="">Cargando...</option>
+          <option value="">Cargando buses...</option>
         </select>
       </div>
     </div>
@@ -301,7 +301,7 @@
         </select>
         <div id="pdf-container" style="display: none;">
           <button id="descargar-pdf-btn" class="btn btn-info btn-sm pdf-link">
-            <i class="fas fa-file-pdf"></i> Descargar PDF del Mantenimiento
+            <i class="fas fa-file-pdf"></i> Descargar PDF del Servicio
           </button>
         </div>
       </div>
@@ -434,7 +434,7 @@
     // Descargar PDF según el tipo de mantenimiento
     function descargarPdf(tipoMantenimiento) {
       // Nombre del archivo PDF basado en el tipo de mantenimiento
-      const nombreArchivo = `${tipoMantenimiento}.pdf`;
+      const nombreArchivo = `${tipoMantenimiento.replace(' ', '_')}_Bus.pdf`;
       
       // Crear un enlace temporal para la descarga
       const link = document.createElement('a');
@@ -444,7 +444,7 @@
       link.click();
       document.body.removeChild(link);
       
-      mostrarExito(`PDF de ${tipoMantenimiento} descargado correctamente`);
+      mostrarExito(`PDF del ${tipoMantenimiento} para Bus descargado correctamente`);
     }
 
     // Cargar patentes de buses
@@ -453,21 +453,20 @@
       const { data, error } = await supabase
         .from('maquinas')
         .select('patente, id')
-        .eq('tipo', 'bus')  // Filtrar solo buses
         .order('patente', { ascending: true });
 
       if (error) {
-        console.error('Error al cargar patentes:', error.message);
+        console.error('Error al cargar patentes de buses:', error.message);
         mostrarError('Error al cargar los buses');
         selectMaquina.innerHTML = '<option value="">Error al cargar</option>';
         return;
       }
 
       selectMaquina.innerHTML = '<option value="">Seleccione un bus</option>';
-      data.forEach(bus => {
+      data.forEach(maquina => {
         const opt = document.createElement('option');
-        opt.value = bus.id;
-        opt.textContent = bus.patente;
+        opt.value = maquina.id;
+        opt.textContent = maquina.patente;
         selectMaquina.appendChild(opt);
       });
     }
@@ -644,7 +643,7 @@
 
         if (error) throw error;
 
-        mostrarExito('Mantenimiento por kilometraje de bus guardado correctamente');
+        mostrarExito('Mantenimiento por kilometraje para Bus guardado correctamente');
         
         // Limpiar formulario
         document.getElementById('descripcion').value = '';
