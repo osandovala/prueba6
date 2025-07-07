@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Documentación Vehículos SPRINTER - HGT Tour</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #3f72af;
+      --color-secondary: #dbe2ef;
+      --color-text: #112d4e;
+      --color-accent: #2c5282;
+      --color-success: #2ecc71;
+      --color-warning: #f39c12;
+      --color-error: #e74c3c;
+      --border-radius: 8px;
+      --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      color: var(--color-text);
+      padding: 20px;
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: var(--color-primary);
+      margin-bottom: 10px;
+    }
+
+    .header h2 {
+      color: var(--color-text);
+      font-weight: 500;
+    }
+
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+    }
+
+    .documentacion-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+
+    .documentacion-table th {
+      background-color: var(--color-primary);
+      color: white;
+      padding: 12px;
+      text-align: left;
+      position: sticky;
+      top: 0;
+    }
+
+    .documentacion-table td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .documentacion-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .documentacion-table tr:hover {
+      background-color: var(--color-secondary);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-vencido {
+      background-color: #fde8e8;
+      color: var(--color-error);
+    }
+
+    .status-vigente {
+      background-color: #e8f8f0;
+      color: var(--color-success);
+    }
+
+    .status-proximo {
+      background-color: #fef5e8;
+      color: var(--color-warning);
+    }
+
+    .btn {
+      padding: 8px 15px;
+      border: none;
+      border-radius: var(--border-radius);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-accent);
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+
+    .btn-success {
+      background-color: var(--color-success);
+    }
+
+    .btn-success:hover {
+      background-color: #27ae60;
+    }
+
+    .btn-danger {
+      background-color: var(--color-error);
+    }
+
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      width: 80%;
+      max-width: 600px;
+      box-shadow: var(--box-shadow);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-title {
+      color: var(--color-primary);
+      font-size: 1.5rem;
+    }
+
+    .close-modal {
+      color: #aaa;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close-modal:hover {
+      color: var(--color-text);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+    }
+
+    .modal-footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .filters {
+        flex-direction: column;
+      }
+      
+      .filter-group {
+        min-width: 100%;
+      }
+      
+      .documentacion-table {
+        font-size: 0.9rem;
+      }
+      
+      .documentacion-table th, 
+      .documentacion-table td {
+        padding: 8px 5px;
+      }
+      
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <div class="header">
+      <h1>Documentación Vehículos SPRINTER</h1>
+      <h2>HGT Tour - Control de Vencimientos</h2>
+    </div>
+
+    <div class="actions">
+      <div class="filters">
+        <div class="filter-group">
+          <label for="filter-cto">CTO</label>
+          <select id="filter-cto">
+            <option value="">Todos</option>
+            <option value="M.E">M.E</option>
+            <option value="GARDILCIC">GARDILCIC</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-status">Estatus</label>
+          <select id="filter-status">
+            <option value="">Todos</option>
+            <option value="VIGENTE">Vigente</option>
+            <option value="VENCIDO">Vencido</option>
+            <option value="PROXIMO">Próximo a vencer</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-search">Buscar Patente</label>
+          <input type="text" id="filter-search" placeholder="Ingrese patente...">
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-exportar">
+        <i class="fas fa-file-export"></i> Exportar PDF
+      </button>
+    </div>
+
+    <div style="overflow-x: auto;">
+      <table class="documentacion-table" id="tabla-documentacion">
+        <thead>
+          <tr>
+            <th>CTO</th>
+            <th>MODELO</th>
+            <th>PATENTE</th>
+            <th>PERMISO CIRC.</th>
+            <th>SEGURO</th>
+            <th>REV. TÉCNICA</th>
+            <th>CERT. OPER.</th>
+            <th>SIST. SUPR.</th>
+            <th>SEG. TERCEROS</th>
+            <th>DECRETO 80</th>
+            <th>ESTATUS</th>
+            <th>ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-body">
+          <!-- Los datos se cargarán dinámicamente con JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 20px; text-align: center;">
+      <button class="btn btn-secondary" onclick="location.href='menu.html'">
+        <i class="fas fa-arrow-left"></i> Volver al Menú
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal para editar -->
+  <div id="modal-editar" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Documentación</h3>
+        <span class="close-modal">&times;</span>
+      </div>
+      <form id="form-editar">
+        <input type="hidden" id="edit-id">
+        <div class="form-group">
+          <label for="edit-cto">CTO</label>
+          <input type="text" id="edit-cto" readonly>
+        </div>
+        <div class="form-group">
+          <label for="edit-modelo">Modelo</label>
+          <input type="text" id="edit-modelo" readonly>
+        </div>
+        <div class="form-group">
+          <label for="edit-patente">Patente</label>
+          <input type="text" id="edit-patente" readonly>
+        </div>
+        
+        <div class="form-group">
+          <label for="edit-permiso">Fecha Permiso Circulación</label>
+          <input type="date" id="edit-permiso" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-seguro">Fecha Seguro</label>
+          <input type="date" id="edit-seguro" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-revision">Fecha Revisión Técnica</label>
+          <input type="date" id="edit-revision" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-certificado">Fecha Certificado Operatividad</label>
+          <input type="date" id="edit-certificado" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-sistema">Fecha Sistema Supresión</label>
+          <input type="date" id="edit-sistema" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-seguro-terceros">Fecha Seguro Contra Terceros</label>
+          <input type="date" id="edit-seguro-terceros" required>
+        </div>
+        <div class="form-group">
+          <label for="edit-decreto">Fecha Decreto 80</label>
+          <input type="date" id="edit-decreto" required>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Datos de los SPRINTERs
+    const sprinters = [
+      {
+        id: 1,
+        cto: "M.E",
+        modelo: "SPRINTER 516 CDI",
+        patente: "LL-KP23",
+        permiso: "2026-05-31",
+        seguro: "2026-05-31",
+        revision: "2025-08-13",
+        certificado: "2023-10-19",
+        sistema: "2023-01-18",
+        seguro_terceros: "2023-08-24",
+        decreto: "2026-12-11",
+        estatus: "VENCIDO"
+      },
+      {
+        id: 2,
+        cto: "M.E",
+        modelo: "SPRINTER 516 CDI",
+        patente: "LL-KP24",
+        permiso: "2026-05-31",
+        seguro: "2026-05-31",
+        revision: "2023-06-13",
+        certificado: "2023-10-20",
+        sistema: "2023-01-18",
+        seguro_terceros: "2023-08-24",
+        decreto: "2023-12-17",
+        estatus: "VENCIDO"
+      },
+      {
+        id: 3,
+        cto: "M.E",
+        modelo: "SPRINTER 516 CDI",
+        patente: "LL-KS37",
+        permiso: "2026-05-31",
+        seguro: "2026-05-31",
+        revision: "2025-09-26",
+        certificado: "2022-06-14",
+        sistema: "2023-01-18",
+        seguro_terceros: "2023-08-24",
+        decreto: "2027-02-08",
+        estatus: "VENCIDO"
+      },
+      {
+        id: 4,
+        cto: "GARDILCIC",
+        modelo: "SPRINTER 516 CDI",
+        patente: "PP-PJ69",
+        permiso: "2026-05-31",
+        seguro: "2026-05-31",
+        revision: "2025-12-24",
+        certificado: "2025-08-05",
+        sistema: "2025-06-03",
+        seguro_terceros: "2023-08-24",
+        decreto: "2027-02-08",
+        estatus: "VENCIDO"
+      },
+      {
+        id: 5,
+        cto: "GARDILCIC",
+        modelo: "SPRINTER 516 CDI",
+        patente: "PP-PJ70",
+        permiso: "2026-05-31",
+        seguro: "2026-05-31",
+        revision: "2025-12-13",
+        certificado: "2025-12-11",
+        sistema: "2025-06-03",
+        seguro_terceros: "2023-08-25",
+        decreto: "2027-02-08",
+        estatus: "VENCIDO"
+      },
+      {
+        id: 6,
+        cto: "GARDILCIC",
+        modelo: "SPRINTER 516 CDI",
+        patente: "PP-PJ73",
+        permiso: "2026-05-31",
+        seguro: "2026-05-31",
+        revision: "2025-07-20",
+        certificado: "2025-10-24",
+        sistema: "2025-05-28",
+        seguro_terceros: "2023-08-25",
+        decreto: "2027-02-08",
+        estatus: "VENCIDO"
+      },
+      {
+        id: 7,
+        cto: "GARDILCIC",
+        modelo: "SPRINTER 516 CDI",
+        patente: "LY-ZB94",
+        permiso: "2026-05-31",
+        seguro: "2026-05-31",
+        revision: "2025-11-14",
+        certificado: "2025-10-07",
+        sistema: "2025-06-03",
+        seguro_terceros: "2023-08-29",
+        decreto: "2027-02-08",
+        estatus: "VENCIDO"
+      },
+      {
+        id: 8,
+        cto: "GARDILCIC",
+        modelo: "SPRINTER 516 CDI",
+        patente: "PB-YS78",
+        permiso: "2026-05-31",
+        seguro: "2026-05-31",
+        revision: "2025-11-28",
+        certificado: "2025-11-28",
+        sistema: "2025-06-03",
+        seguro_terceros: "2023-08-31",
+        decreto: "2027-02-08",
+        estatus: "VENCIDO"
+      }
+    ];
+
+    // Función para formatear fecha de YYYY-MM-DD a DD/MM/YYYY
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      const [year, month, day] = dateString.split('-');
+      return `${day}/${month}/${year}`;
+    }
+
+    // Función para calcular días restantes
+    function calcularDiasRestantes(fechaString) {
+      if (!fechaString) return { dias: 0, estado: 'VENCIDO' };
+      
+      const fechaVencimiento = new Date(fechaString);
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      
+      const diffTime = fechaVencimiento - hoy;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays < 0) {
+        return { dias: diffDays, estado: 'VENCIDO' };
+      } else if (diffDays <= 30) {
+        return { dias: diffDays, estado: 'PROXIMO' };
+      } else {
+        return { dias: diffDays, estado: 'VIGENTE' };
+      }
+    }
+
+    // Función para determinar el estado general del vehículo
+    function determinarEstadoGeneral(sprinter) {
+      const campos = [
+        'permiso', 'seguro', 'revision', 'certificado', 
+        'sistema', 'seguro_terceros', 'decreto'
+      ];
+      
+      let estadoGeneral = 'VIGENTE';
+      
+      campos.forEach(campo => {
+        const { estado } = calcularDiasRestantes(sprinter[campo]);
+        if (estado === 'VENCIDO') {
+          estadoGeneral = 'VENCIDO';
+        } else if (estado === 'PROXIMO' && estadoGeneral !== 'VENCIDO') {
+          estadoGeneral = 'PROXIMO';
+        }
+      });
+      
+      return estadoGeneral;
+    }
+
+    // Función para renderizar la tabla
+    function renderizarTabla() {
+      const tablaBody = document.getElementById('tabla-body');
+      tablaBody.innerHTML = '';
+      
+      sprinters.forEach(sprinter => {
+        const estadoGeneral = determinarEstadoGeneral(sprinter);
+        
+        const row = document.createElement('tr');
+        row.dataset.id = sprinter.id;
+        
+        // CTO, Modelo, Patente
+        row.innerHTML = `
+          <td>${sprinter.cto}</td>
+          <td>${sprinter.modelo}</td>
+          <td>${sprinter.patente}</td>
+        `;
+        
+        // Función para crear celda con fecha y estado
+        const crearCeldaFecha = (fecha) => {
+          const { dias, estado } = calcularDiasRestantes(fecha);
+          const fechaFormateada = formatDate(fecha);
+          
+          let claseEstado = '';
+          let textoEstado = '';
+          
+          if (estado === 'VENCIDO') {
+            claseEstado = 'status-vencido';
+            textoEstado = 'Vencido';
+          } else if (estado === 'PROXIMO') {
+            claseEstado = 'status-proximo';
+            textoEstado = `${dias} días`;
+          } else {
+            claseEstado = 'status-vigente';
+            textoEstado = `${dias} días`;
+          }
+          
+          return `
+            <td>
+              <div>${fechaFormateada}</div>
+              <div class="status-badge ${claseEstado}">${textoEstado}</div>
+            </td>
+          `;
+        };
+        
+        // Agregar celdas de fechas
+        row.innerHTML += crearCeldaFecha(sprinter.permiso);
+        row.innerHTML += crearCeldaFecha(sprinter.seguro);
+        row.innerHTML += crearCeldaFecha(sprinter.revision);
+        row.innerHTML += crearCeldaFecha(sprinter.certificado);
+        row.innerHTML += crearCeldaFecha(sprinter.sistema);
+        row.innerHTML += crearCeldaFecha(sprinter.seguro_terceros);
+        row.innerHTML += crearCeldaFecha(sprinter.decreto);
+        
+        // Estado general
+        let claseEstadoGeneral = '';
+        if (estadoGeneral === 'VENCIDO') {
+          claseEstadoGeneral = 'status-vencido';
+        } else if (estadoGeneral === 'PROXIMO') {
+          claseEstadoGeneral = 'status-proximo';
+        } else {
+          claseEstadoGeneral = 'status-vigente';
+        }
+        
+        row.innerHTML += `
+          <td>
+            <div class="status-badge ${claseEstadoGeneral}">${estadoGeneral}</div>
+          </td>
+          <td>
+            <button class="btn btn-secondary btn-sm btn-editar" data-id="${sprinter.id}">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+          </td>
+        `;
+        
+        tablaBody.appendChild(row);
+      });
+      
+      // Agregar eventos a los botones de editar
+      document.querySelectorAll('.btn-editar').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = parseInt(e.currentTarget.dataset.id);
+          abrirModalEditar(id);
+        });
+      });
+    }
+
+    // Modal de edición
+    const modal = document.getElementById('modal-editar');
+    const btnCancelar = document.getElementById('btn-cancelar');
+    const closeModal = document.querySelector('.close-modal');
+    const formEditar = document.getElementById('form-editar');
+
+    function abrirModalEditar(id) {
+      const sprinter = sprinters.find(s => s.id === id);
+      if (!sprinter) return;
+      
+      document.getElementById('edit-id').value = sprinter.id;
+      document.getElementById('edit-cto').value = sprinter.cto;
+      document.getElementById('edit-modelo').value = sprinter.modelo;
+      document.getElementById('edit-patente').value = sprinter.patente;
+      document.getElementById('edit-permiso').value = sprinter.permiso;
+      document.getElementById('edit-seguro').value = sprinter.seguro;
+      document.getElementById('edit-revision').value = sprinter.revision;
+      document.getElementById('edit-certificado').value = sprinter.certificado;
+      document.getElementById('edit-sistema').value = sprinter.sistema;
+      document.getElementById('edit-seguro-terceros').value = sprinter.seguro_terceros;
+      document.getElementById('edit-decreto').value = sprinter.decreto;
+      
+      modal.style.display = 'block';
+    }
+
+    function cerrarModal() {
+      modal.style.display = 'none';
+    }
+
+    // Eventos del modal
+    closeModal.addEventListener('click', cerrarModal);
+    btnCancelar.addEventListener('click', cerrarModal);
+
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        cerrarModal();
+      }
+    });
+
+    // Guardar cambios
+    formEditar.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const id = parseInt(document.getElementById('edit-id').value);
+      const sprinterIndex = sprinters.findIndex(s => s.id === id);
+      
+      if (sprinterIndex !== -1) {
+        sprinters[sprinterIndex] = {
+          ...sprinters[sprinterIndex],
+          permiso: document.getElementById('edit-permiso').value,
+          seguro: document.getElementById('edit-seguro').value,
+          revision: document.getElementById('edit-revision').value,
+          certificado: document.getElementById('edit-certificado').value,
+          sistema: document.getElementById('edit-sistema').value,
+          seguro_terceros: document.getElementById('edit-seguro-terceros').value,
+          decreto: document.getElementById('edit-decreto').value
+        };
+        
+        renderizarTabla();
+        cerrarModal();
+        
+        // Mostrar mensaje de éxito
+        alert('Los cambios se guardaron correctamente');
+      }
+    });
+
+    // Filtros
+    function aplicarFiltros() {
+      const filtroCto = document.getElementById('filter-cto').value;
+      const filtroEstado = document.getElementById('filter-status').value;
+      const filtroBusqueda = document.getElementById('filter-search').value.toLowerCase();
+      
+      document.querySelectorAll('#tabla-body tr').forEach(row => {
+        const cto = row.cells[0].textContent;
+        const estado = row.cells[10].textContent;
+        const patente = row.cells[2].textContent.toLowerCase();
+        
+        const cumpleCto = !filtroCto || cto === filtroCto;
+        const cumpleEstado = !filtroEstado || estado === filtroEstado;
+        const cumpleBusqueda = !filtroBusqueda || patente.includes(filtroBusqueda);
+        
+        if (cumpleCto && cumpleEstado && cumpleBusqueda) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    document.getElementById('filter-cto').addEventListener('change', aplicarFiltros);
+    document.getElementById('filter-status').addEventListener('change', aplicarFiltros);
+    document.getElementById('filter-search').addEventListener('input', aplicarFiltros);
+
+    // Exportar a PDF
+    document.getElementById('btn-exportar').addEventListener('click', exportarPDF);
+
+    function exportarPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Título
+      doc.setFontSize(18);
+      doc.text('Documentación Vehículos SPRINTER - HGT Tour', 105, 15, { align: 'center' });
+      
+      // Fecha de generación
+      const fecha = new Date().toLocaleDateString('es-CL');
+      doc.setFontSize(10);
+      doc.text(`Generado el: ${fecha}`, 105, 22, { align: 'center' });
+      
+      // Encabezados de la tabla
+      const headers = [
+        'CTO',
+        'Modelo',
+        'Patente',
+        'Permiso Circ.',
+        'Seguro',
+        'Rev. Técnica',
+        'Cert. Oper.',
+        'Sist. Supr.',
+        'Seg. Terceros',
+        'Decreto 80',
+        'Estatus'
+      ];
+      
+      // Datos de la tabla
+      const data = sprinters.map(sprinter => {
+        const estadoGeneral = determinarEstadoGeneral(sprinter);
+        
+        return [
+          sprinter.cto,
+          sprinter.modelo,
+          sprinter.patente,
+          formatDate(sprinter.permiso) + ` (${calcularDiasRestantes(sprinter.permiso).dias} días)`,
+          formatDate(sprinter.seguro) + ` (${calcularDiasRestantes(sprinter.seguro).dias} días)`,
+          formatDate(sprinter.revision) + ` (${calcularDiasRestantes(sprinter.revision).dias} días)`,
+          formatDate(sprinter.certificado) + ` (${calcularDiasRestantes(sprinter.certificado).dias} días)`,
+          formatDate(sprinter.sistema) + ` (${calcularDiasRestantes(sprinter.sistema).dias} días)`,
+          formatDate(sprinter.seguro_terceros) + ` (${calcularDiasRestantes(sprinter.seguro_terceros).dias} días)`,
+          formatDate(sprinter.decreto) + ` (${calcularDiasRestantes(sprinter.decreto).dias} días)`,
+          estadoGeneral
+        ];
+      });
+      
+      // Configuración de la tabla
+      doc.autoTable({
+        head: [headers],
+        body: data,
+        startY: 30,
+        styles: {
+          fontSize: 8,
+          cellPadding: 2,
+          overflow: 'linebreak'
+        },
+        headStyles: {
+          fillColor: [63, 114, 175],
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: {
+          fillColor: [240, 240, 240]
+        },
+        columnStyles: {
+          0: { cellWidth: 15 },
+          1: { cellWidth: 30 },
+          2: { cellWidth: 20 },
+          3: { cellWidth: 25 },
+          4: { cellWidth: 25 },
+          5: { cellWidth: 25 },
+          6: { cellWidth: 25 },
+          7: { cellWidth: 25 },
+          8: { cellWidth: 25 },
+          9: { cellWidth: 25 },
+          10: { cellWidth: 20 }
+        },
+        margin: { left: 10, right: 10 }
+      });
+      
+      // Guardar el PDF
+      doc.save(`Documentacion_SPRINTER_${fecha.replace(/\//g, '-')}.pdf`);
+    }
+
+    // Inicializar la tabla al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+      renderizarTabla();
+    });
+  </script>
+</body>
+</html>
