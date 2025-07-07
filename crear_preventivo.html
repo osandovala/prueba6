@@ -154,7 +154,7 @@
     }
 
     .btn-danger {
-      background: var(--color-danger);
+      background: var(--color-error);
     }
 
     .btn-danger:hover {
@@ -212,8 +212,8 @@
 
     .error {
       background-color: #f8d7da;
-      color: var(--color-danger);
-      border-left: 4px solid var(--color-danger);
+      color: var(--color-error);
+      border-left: 4px solid var(--color-error);
     }
 
     .success {
@@ -404,12 +404,9 @@
       });
     }
 
-    // Cargar responsables y autorizados
+    // Cargar responsables (mecánicos)
     async function cargarMecanicos() {
-      const selects = [
-        document.getElementById('responsable'),
-        document.getElementById('autorizado-por')
-      ];
+      const selectResponsable = document.getElementById('responsable');
 
       const { data, error } = await supabase
         .from('mecanicos')
@@ -419,18 +416,41 @@
       if (error) {
         console.error('Error al cargar mecánicos:', error.message);
         mostrarError('Error al cargar los mecánicos');
-        selects.forEach(s => s.innerHTML = '<option value="">Error al cargar</option>');
+        selectResponsable.innerHTML = '<option value="">Error al cargar</option>';
         return;
       }
 
-      selects.forEach(select => {
-        select.innerHTML = '<option value="">Seleccione</option>';
-        data.forEach(mecanico => {
-          const opt = document.createElement('option');
-          opt.value = mecanico.nombre;
-          opt.textContent = mecanico.nombre;
-          select.appendChild(opt);
-        });
+      selectResponsable.innerHTML = '<option value="">Seleccione</option>';
+      data.forEach(mecanico => {
+        const opt = document.createElement('option');
+        opt.value = mecanico.nombre;
+        opt.textContent = mecanico.nombre;
+        selectResponsable.appendChild(opt);
+      });
+    }
+
+    // Cargar supervisores para "Autorizado por"
+    async function cargarSupervisores() {
+      const selectAutorizado = document.getElementById('autorizado-por');
+
+      const { data, error } = await supabase
+        .from('supervisores')
+        .select('nombre')
+        .order('nombre', { ascending: true });
+
+      if (error) {
+        console.error('Error al cargar supervisores:', error.message);
+        mostrarError('Error al cargar los supervisores');
+        selectAutorizado.innerHTML = '<option value="">Error al cargar</option>';
+        return;
+      }
+
+      selectAutorizado.innerHTML = '<option value="">Seleccione</option>';
+      data.forEach(supervisor => {
+        const opt = document.createElement('option');
+        opt.value = supervisor.nombre;
+        opt.textContent = supervisor.nombre;
+        selectAutorizado.appendChild(opt);
       });
     }
 
@@ -566,9 +586,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       cargarPatentes();
       cargarMecanicos();
+      cargarSupervisores();
       actualizarTablaInsumos();
     });
   </script>
 </body>
 </html>
-
