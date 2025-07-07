@@ -51,25 +51,11 @@
       background: linear-gradient(90deg, #3f72af, #2c5282);
     }
     
-    .logo-container {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: white;
+    .logo {
+      width: 180px;
+      height: auto;
       margin: 0 auto 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 5px solid var(--color-secondary);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      position: relative;
-    }
-    
-    .logo-container img {
-      width: 80%;
-      height: 80%;
-      object-fit: contain;
+      display: block;
     }
     
     h1 {
@@ -150,9 +136,8 @@
         padding: 25px 20px;
       }
       
-      .logo-container {
-        width: 100px;
-        height: 100px;
+      .logo {
+        width: 150px;
       }
       
       h1 {
@@ -167,12 +152,8 @@
 </head>
 <body>
   <div class="container">
-    <div class="logo-container">
-      <!-- Logo en círculo con URL absoluta de GitHub -->
-      <img src="https://raw.githubusercontent.com/tu-usuario/tu-repositorio/main/img/logo.png" 
-           alt="Logo HGT Tour"
-           onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%233f72af\'/><text x=\'50\' y=\'60\' text-anchor=\'middle\' font-size=\'40\' fill=\'white\' font-weight=\'bold\'>HGT</text></svg>';">
-    </div>
+    <!-- Logo rectangular sin contenedor circular -->
+    <img src="img/logo6.png" alt="Logo HGT Tour" class="logo">
     
     <h1>Software de Mantenciones</h1>
     <h2>Iniciar Sesión</h2>
