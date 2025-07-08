@@ -17,6 +17,7 @@
             --color-warning: #f39c12;
             --border-radius: 8px;
             --box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            --calendar-green: #90EE90; /* Verde claro para el calendario */
         }
         
         body {
@@ -332,6 +333,40 @@
             max-width: 100%;
         }
         
+        /* Estilos para los días de la semana */
+        .fc-col-header-cell.fc-day-header {
+            color: var(--calendar-green); /* Verde claro */
+            font-weight: bold;
+            background-color: #f8f9fa; /* Fondo gris claro */
+        }
+        
+        /* Estilos para los números de los días */
+        .fc-daygrid-day-number {
+            color: var(--calendar-green); /* Verde claro */
+        }
+        
+        /* Estilos para el título del mes/año */
+        .fc-toolbar-title {
+            color: var(--calendar-green); /* Verde claro */
+        }
+        
+        /* Estilos para los botones de navegación */
+        .fc-button {
+            color: var(--calendar-green) !important;
+            border-color: var(--calendar-green) !important;
+        }
+        
+        .fc-button:hover {
+            background-color: var(--calendar-green) !important;
+            color: white !important;
+        }
+        
+        .fc-button-active {
+            background-color: var(--calendar-green) !important;
+            color: white !important;
+        }
+        
+        /* Estilos para los eventos */
         .fc-event {
             cursor: pointer;
             opacity: 0.9;
