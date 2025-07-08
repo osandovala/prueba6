@@ -1,4 +1,4 @@
-OCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -56,39 +56,11 @@ OCTYPE html>
       background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
     }
 
-    .logo-container {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: white;
+    .logo {
+      width: 180px;
+      height: auto;
       margin: 0 auto 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 5px solid var(--color-secondary);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .logo-container img {
-      width: 80%;
-      height: 80%;
-      object-fit: contain;
-    }
-
-    .logo-placeholder {
-      background: var(--color-primary);
-      color: white;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 1.2rem;
-      text-align: center;
-      padding: 10px;
+      display: block;
     }
 
     .header-text {
@@ -159,9 +131,8 @@ OCTYPE html>
         padding: 25px 20px;
       }
 
-      .logo-container {
-        width: 100px;
-        height: 100px;
+      .logo {
+        width: 150px;
       }
 
       .header-text h1 {
@@ -184,11 +155,8 @@ OCTYPE html>
 </head>
 <body>
   <div class="main-container">
-    <div class="logo-container">
-      <img src="https://raw.githubusercontent.com/tu-usuario/tu-repositorio/main/img/logo.png" 
-           alt="Logo HGT Tour"
-           onerror="this.onerror=null; this.parentElement.innerHTML='<div class=&quot;logo-placeholder&quot;>HGT<br>Tour</div>';"/>
-    </div>
+    <!-- Logo rectangular sin contenedor circular -->
+    <img src="img/logo.png" alt="Logo HGT Tour" class="logo">
 
     <div class="header-text">
       <h1>Software de Mantenciones HGT Tour</h1>
