@@ -1,862 +1,602 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Documentación Vehículos SPRINTER - HGT Tour</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-  <style>
-    :root {
-      --color-primary: #3f72af;
-      --color-secondary: #dbe2ef;
-      --color-text: #112d4e;
-      --color-accent: #2c5282;
-      --color-success: #2ecc71;
-      --color-warning: #f39c12;
-      --color-error: #e74c3c;
-      --border-radius: 8px;
-      --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background-color: #f5f7fa;
-      color: var(--color-text);
-      padding: 20px;
-    }
-
-    .main-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      padding: 30px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .main-container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 5px;
-      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .header h1 {
-      color: var(--color-primary);
-      margin-bottom: 10px;
-    }
-
-    .header h2 {
-      color: var(--color-text);
-      font-weight: 500;
-    }
-
-    .filters {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .filter-group {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
-    select, input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: var(--border-radius);
-    }
-
-    .documentacion-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      overflow-x: auto;
-    }
-
-    .documentacion-table th {
-      background-color: var(--color-primary);
-      color: white;
-      padding: 12px;
-      text-align: left;
-      position: sticky;
-      top: 0;
-    }
-
-    .documentacion-table td {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .documentacion-table tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    .documentacion-table tr:hover {
-      background-color: var(--color-secondary);
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .status-vencido {
-      background-color: #fde8e8;
-      color: var(--color-error);
-    }
-
-    .status-vigente {
-      background-color: #e8f8f0;
-      color: var(--color-success);
-    }
-
-    .status-proximo {
-      background-color: #fef5e8;
-      color: var(--color-warning);
-    }
-
-    .btn {
-      padding: 8px 15px;
-      border: none;
-      border-radius: var(--border-radius);
-      color: white;
-      cursor: pointer;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.3s;
-    }
-
-    .btn-primary {
-      background-color: var(--color-primary);
-    }
-
-    .btn-primary:hover {
-      background-color: var(--color-accent);
-    }
-
-    .btn-secondary {
-      background-color: #6c757d;
-    }
-
-    .btn-secondary:hover {
-      background-color: #5a6268;
-    }
-
-    .btn-success {
-      background-color: var(--color-success);
-    }
-
-    .btn-success:hover {
-      background-color: #27ae60;
-    }
-
-    .btn-danger {
-      background-color: var(--color-error);
-    }
-
-    .btn-danger:hover {
-      background-color: #c0392b;
-    }
-
-    .actions {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 100;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      overflow: auto;
-    }
-
-    .modal-content {
-      background-color: white;
-      margin: 5% auto;
-      padding: 20px;
-      border-radius: var(--border-radius);
-      width: 80%;
-      max-width: 600px;
-      box-shadow: var(--box-shadow);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .modal-title {
-      color: var(--color-primary);
-      font-size: 1.5rem;
-    }
-
-    .close-modal {
-      color: #aaa;
-      font-size: 1.5rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .close-modal:hover {
-      color: var(--color-text);
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: var(--border-radius);
-    }
-
-    .modal-footer {
-      margin-top: 20px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-    }
-
-    @media (max-width: 768px) {
-      .filters {
-        flex-direction: column;
-      }
-      
-      .filter-group {
-        min-width: 100%;
-      }
-      
-      .documentacion-table {
-        font-size: 0.9rem;
-      }
-      
-      .documentacion-table th, 
-      .documentacion-table td {
-        padding: 8px 5px;
-      }
-      
-      .modal-content {
-        width: 95%;
-        margin: 10% auto;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Documentación</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+        .highlight-expired {
+            background-color: #ffdddd;
+        }
+        .highlight-warning {
+            background-color: #fff3cd;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,.3);
+            border-radius: 50%;
+            border-top-color: #000;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .connection-good {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .connection-bad {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
 </head>
 <body>
-  <div class="main-container">
-    <div class="header">
-      <h1>Documentación Vehículos SPRINTER</h1>
-      <h2>HGT Tour - Control de Vencimientos</h2>
-    </div>
-
-    <div class="actions">
-      <div class="filters">
-        <div class="filter-group">
-          <label for="filter-cto">CTO</label>
-          <select id="filter-cto">
-            <option value="">Todos</option>
-            <option value="M.E">M.E</option>
-            <option value="GARDILCIC">GARDILCIC</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label for="filter-status">Estatus</label>
-          <select id="filter-status">
-            <option value="">Todos</option>
-            <option value="VIGENTE">Vigente</option>
-            <option value="VENCIDO">Vencido</option>
-            <option value="PROXIMO">Próximo a vencer</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <label for="filter-search">Buscar Patente</label>
-          <input type="text" id="filter-search" placeholder="Ingrese patente...">
-        </div>
-      </div>
-      <button class="btn btn-primary" id="btn-exportar">
-        <i class="fas fa-file-export"></i> Exportar PDF
-      </button>
-    </div>
-
-    <div style="overflow-x: auto;">
-      <table class="documentacion-table" id="tabla-documentacion">
-        <thead>
-          <tr>
-            <th>CTO</th>
-            <th>MODELO</th>
-            <th>PATENTE</th>
-            <th>PERMISO CIRC.</th>
-            <th>SEGURO</th>
-            <th>REV. TÉCNICA</th>
-            <th>CERT. OPER.</th>
-            <th>SIST. SUPR.</th>
-            <th>SEG. TERCEROS</th>
-            <th>DECRETO 80</th>
-            <th>ESTATUS</th>
-            <th>ACCIONES</th>
-          </tr>
-        </thead>
-        <tbody id="tabla-body">
-          <!-- Los datos se cargarán dinámicamente con JavaScript -->
-        </tbody>
-      </table>
-    </div>
-
-    <div style="margin-top: 20px; text-align: center;">
-      <button class="btn btn-secondary" onclick="location.href='menu.html'">
-        <i class="fas fa-arrow-left"></i> Volver al Menú
-      </button>
-    </div>
-  </div>
-
-  <!-- Modal para editar -->
-  <div id="modal-editar" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Editar Documentación</h3>
-        <span class="close-modal">&times;</span>
-      </div>
-      <form id="form-editar">
-        <input type="hidden" id="edit-id">
-        <div class="form-group">
-          <label for="edit-cto">CTO</label>
-          <input type="text" id="edit-cto" readonly>
-        </div>
-        <div class="form-group">
-          <label for="edit-modelo">Modelo</label>
-          <input type="text" id="edit-modelo" readonly>
-        </div>
-        <div class="form-group">
-          <label for="edit-patente">Patente</label>
-          <input type="text" id="edit-patente" readonly>
-        </div>
+    <div id="connectionStatus" class="connection-status" style="display: none;"></div>
+    
+    <div class="container">
+        <h1 class="mb-4">Gestión de Documentación</h1>
         
-        <div class="form-group">
-          <label for="edit-permiso">Fecha Permiso Circulación</label>
-          <input type="date" id="edit-permiso" required>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Nuevo Registro</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="documentacionForm">
+                            <div class="form-group">
+                                <label for="cto" class="form-label">CTO*</label>
+                                <input type="text" class="form-control" id="cto" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="modelo" class="form-label">Modelo</label>
+                                <input type="text" class="form-control" id="modelo">
+                            </div>
+                            <div class="form-group">
+                                <label for="patente" class="form-label">Patente</label>
+                                <input type="text" class="form-control" id="patente">
+                            </div>
+                            <div class="form-group">
+                                <label for="fecha_vencimiento_permiso_circulacion" class="form-label">Vencimiento Permiso Circulación</label>
+                                <input type="date" class="form-control" id="fecha_vencimiento_permiso_circulacion">
+                            </div>
+                            <div class="form-group">
+                                <label for="seguro_vencimiento" class="form-label">Vencimiento Seguro</label>
+                                <input type="date" class="form-control" id="seguro_vencimiento">
+                            </div>
+                            <div class="form-group">
+                                <label for="revision_tecnica_vencimiento" class="form-label">Vencimiento Revisión Técnica</label>
+                                <input type="date" class="form-control" id="revision_tecnica_vencimiento">
+                            </div>
+                            <div class="form-group">
+                                <label for="certificado_operatividad_vencimiento" class="form-label">Vencimiento Certificado Operatividad</label>
+                                <input type="date" class="form-control" id="certificado_operatividad_vencimiento">
+                            </div>
+                            <div class="form-group">
+                                <label for="sistema_supresion_vencimiento" class="form-label">Vencimiento Sistema Supresión</label>
+                                <input type="date" class="form-control" id="sistema_supresion_vencimiento">
+                            </div>
+                            <div class="form-group">
+                                <label for="seguro_terceros_vencimiento" class="form-label">Vencimiento Seguro Terceros</label>
+                                <input type="date" class="form-control" id="seguro_terceros_vencimiento">
+                            </div>
+                            <div class="form-group">
+                                <label for="decreto_80_vencimiento" class="form-label">Vencimiento Decreto 80</label>
+                                <input type="date" class="form-control" id="decreto_80_vencimiento">
+                            </div>
+                            <input type="hidden" id="id">
+                            <button type="submit" class="btn btn-primary" id="saveButton">
+                                Guardar <span id="saveSpinner" class="loading" style="display: none;"></span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="cancelEdit" style="display: none;">Cancelar</button>
+                            <div id="formMessage" class="mt-2"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Búsqueda y Filtros</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="searchCto" class="form-label">Buscar por CTO</label>
+                            <input type="text" class="form-control" id="searchCto" placeholder="Ingrese CTO">
+                        </div>
+                        <div class="form-group">
+                            <label for="searchPatente" class="form-label">Buscar por Patente</label>
+                            <input type="text" class="form-control" id="searchPatente" placeholder="Ingrese patente">
+                        </div>
+                        <div class="form-group">
+                            <label for="filterExpired" class="form-label">Filtrar por vencimiento</label>
+                            <select class="form-select" id="filterExpired">
+                                <option value="all">Todos</option>
+                                <option value="expired">Vencidos</option>
+                                <option value="expiring">Por vencer (30 días)</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="searchButton">
+                            Buscar <span id="searchSpinner" class="loading" style="display: none;"></span>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="resetSearch">Limpiar</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-          <label for="edit-seguro">Fecha Seguro</label>
-          <input type="date" id="edit-seguro" required>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>CTO</th>
+                        <th>Modelo</th>
+                        <th>Patente</th>
+                        <th>Permiso Circulación</th>
+                        <th>Seguro</th>
+                        <th>Revisión Técnica</th>
+                        <th>Cert. Operatividad</th>
+                        <th>Sistema Supresión</th>
+                        <th>Seguro Terceros</th>
+                        <th>Decreto 80</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="documentacionTableBody">
+                    <tr>
+                        <td colspan="11" class="text-center">Cargando datos...</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="form-group">
-          <label for="edit-revision">Fecha Revisión Técnica</label>
-          <input type="date" id="edit-revision" required>
-        </div>
-        <div class="form-group">
-          <label for="edit-certificado">Fecha Certificado Operatividad</label>
-          <input type="date" id="edit-certificado" required>
-        </div>
-        <div class="form-group">
-          <label for="edit-sistema">Fecha Sistema Supresión</label>
-          <input type="date" id="edit-sistema" required>
-        </div>
-        <div class="form-group">
-          <label for="edit-seguro-terceros">Fecha Seguro Contra Terceros</label>
-          <input type="date" id="edit-seguro-terceros" required>
-        </div>
-        <div class="form-group">
-          <label for="edit-decreto">Fecha Decreto 80</label>
-          <input type="date" id="edit-decreto" required>
-        </div>
-        
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" id="btn-cancelar">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <script>
-    // Datos de los SPRINTERs
-    const sprinters = [
-      {
-        id: 1,
-        cto: "M.E",
-        modelo: "SPRINTER 516 CDI",
-        patente: "LL-KP23",
-        permiso: "2026-05-31",
-        seguro: "2026-05-31",
-        revision: "2025-08-13",
-        certificado: "2023-10-19",
-        sistema: "2023-01-18",
-        seguro_terceros: "2023-08-24",
-        decreto: "2026-12-11",
-        estatus: "VENCIDO"
-      },
-      {
-        id: 2,
-        cto: "M.E",
-        modelo: "SPRINTER 516 CDI",
-        patente: "LL-KP24",
-        permiso: "2026-05-31",
-        seguro: "2026-05-31",
-        revision: "2023-06-13",
-        certificado: "2023-10-20",
-        sistema: "2023-01-18",
-        seguro_terceros: "2023-08-24",
-        decreto: "2023-12-17",
-        estatus: "VENCIDO"
-      },
-      {
-        id: 3,
-        cto: "M.E",
-        modelo: "SPRINTER 516 CDI",
-        patente: "LL-KS37",
-        permiso: "2026-05-31",
-        seguro: "2026-05-31",
-        revision: "2025-09-26",
-        certificado: "2022-06-14",
-        sistema: "2023-01-18",
-        seguro_terceros: "2023-08-24",
-        decreto: "2027-02-08",
-        estatus: "VENCIDO"
-      },
-      {
-        id: 4,
-        cto: "GARDILCIC",
-        modelo: "SPRINTER 516 CDI",
-        patente: "PP-PJ69",
-        permiso: "2026-05-31",
-        seguro: "2026-05-31",
-        revision: "2025-12-24",
-        certificado: "2025-08-05",
-        sistema: "2025-06-03",
-        seguro_terceros: "2023-08-24",
-        decreto: "2027-02-08",
-        estatus: "VENCIDO"
-      },
-      {
-        id: 5,
-        cto: "GARDILCIC",
-        modelo: "SPRINTER 516 CDI",
-        patente: "PP-PJ70",
-        permiso: "2026-05-31",
-        seguro: "2026-05-31",
-        revision: "2025-12-13",
-        certificado: "2025-12-11",
-        sistema: "2025-06-03",
-        seguro_terceros: "2023-08-25",
-        decreto: "2027-02-08",
-        estatus: "VENCIDO"
-      },
-      {
-        id: 6,
-        cto: "GARDILCIC",
-        modelo: "SPRINTER 516 CDI",
-        patente: "PP-PJ73",
-        permiso: "2026-05-31",
-        seguro: "2026-05-31",
-        revision: "2025-07-20",
-        certificado: "2025-10-24",
-        sistema: "2025-05-28",
-        seguro_terceros: "2023-08-25",
-        decreto: "2027-02-08",
-        estatus: "VENCIDO"
-      },
-      {
-        id: 7,
-        cto: "GARDILCIC",
-        modelo: "SPRINTER 516 CDI",
-        patente: "LY-ZB94",
-        permiso: "2026-05-31",
-        seguro: "2026-05-31",
-        revision: "2025-11-14",
-        certificado: "2025-10-07",
-        sistema: "2025-06-03",
-        seguro_terceros: "2023-08-29",
-        decreto: "2027-02-08",
-        estatus: "VENCIDO"
-      },
-      {
-        id: 8,
-        cto: "GARDILCIC",
-        modelo: "SPRINTER 516 CDI",
-        patente: "PB-YS78",
-        permiso: "2026-05-31",
-        seguro: "2026-05-31",
-        revision: "2025-11-28",
-        certificado: "2025-11-28",
-        sistema: "2025-06-03",
-        seguro_terceros: "2023-08-31",
-        decreto: "2027-02-08",
-        estatus: "VENCIDO"
-      }
-    ];
+    <!-- Cargar Supabase JS correctamente -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://cswjdvjlfztewtmkrxsh.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzd2pkdmpsZnp0ZXd0bWtyeHNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2NDg0ODEsImV4cCI6MjA2NzIyNDQ4MX0.z0C2PtfkvYwIYfFjnFmdRicn_Jfqyq_SbCHKycHBX-4';
+        
+        // Variables globales
+        let supabase;
+        let currentEditId = null;
+        let isConnected = false;
 
-    // Función para formatear fecha de YYYY-MM-DD a DD/MM/YYYY
-    function formatDate(dateString) {
-      if (!dateString) return '';
-      const [year, month, day] = dateString.split('-');
-      return `${day}/${month}/${year}`;
-    }
-
-    // Función para calcular días restantes
-    function calcularDiasRestantes(fechaString) {
-      if (!fechaString) return { dias: 0, estado: 'VENCIDO' };
-      
-      const fechaVencimiento = new Date(fechaString);
-      const hoy = new Date();
-      hoy.setHours(0, 0, 0, 0);
-      
-      const diffTime = fechaVencimiento - hoy;
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
-      if (diffDays < 0) {
-        return { dias: diffDays, estado: 'VENCIDO' };
-      } else if (diffDays <= 30) {
-        return { dias: diffDays, estado: 'PROXIMO' };
-      } else {
-        return { dias: diffDays, estado: 'VIGENTE' };
-      }
-    }
-
-    // Función para determinar el estado general del vehículo
-    function determinarEstadoGeneral(sprinter) {
-      const campos = [
-        'permiso', 'seguro', 'revision', 'certificado', 
-        'sistema', 'seguro_terceros', 'decreto'
-      ];
-      
-      let estadoGeneral = 'VIGENTE';
-      
-      campos.forEach(campo => {
-        const { estado } = calcularDiasRestantes(sprinter[campo]);
-        if (estado === 'VENCIDO') {
-          estadoGeneral = 'VENCIDO';
-        } else if (estado === 'PROXIMO' && estadoGeneral !== 'VENCIDO') {
-          estadoGeneral = 'PROXIMO';
+        // Función para verificar la conexión con Supabase
+        async function checkSupabaseConnection() {
+            const statusElement = document.getElementById('connectionStatus');
+            
+            try {
+                // Intenta una operación simple para verificar la conexión
+                const { error } = await supabase
+                    .from('documentacion')
+                    .select('*')
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                isConnected = true;
+                statusElement.textContent = 'Conectado a Supabase';
+                statusElement.className = 'connection-status connection-good';
+                statusElement.style.display = 'block';
+                console.log('Conexión con Supabase verificada correctamente');
+            } catch (error) {
+                isConnected = false;
+                statusElement.textContent = 'Error de conexión con Supabase';
+                statusElement.className = 'connection-status connection-bad';
+                statusElement.style.display = 'block';
+                console.error('Error verificando conexión con Supabase:', error);
+                
+                // Mostrar mensaje de error más detallado
+                showMessage('Error de conexión con la base de datos. Por favor verifica tu conexión a internet e intenta recargar la página.', 'danger');
+            }
         }
-      });
-      
-      return estadoGeneral;
-    }
 
-    // Función para renderizar la tabla
-    function renderizarTabla() {
-      const tablaBody = document.getElementById('tabla-body');
-      tablaBody.innerHTML = '';
-      
-      sprinters.forEach(sprinter => {
-        const estadoGeneral = determinarEstadoGeneral(sprinter);
-        
-        const row = document.createElement('tr');
-        row.dataset.id = sprinter.id;
-        
-        // CTO, Modelo, Patente
-        row.innerHTML = `
-          <td>${sprinter.cto}</td>
-          <td>${sprinter.modelo}</td>
-          <td>${sprinter.patente}</td>
-        `;
-        
-        // Función para crear celda con fecha y estado
-        const crearCeldaFecha = (fecha) => {
-          const { dias, estado } = calcularDiasRestantes(fecha);
-          const fechaFormateada = formatDate(fecha);
-          
-          let claseEstado = '';
-          let textoEstado = '';
-          
-          if (estado === 'VENCIDO') {
-            claseEstado = 'status-vencido';
-            textoEstado = 'Vencido';
-          } else if (estado === 'PROXIMO') {
-            claseEstado = 'status-proximo';
-            textoEstado = `${dias} días`;
-          } else {
-            claseEstado = 'status-vigente';
-            textoEstado = `${dias} días`;
-          }
-          
-          return `
-            <td>
-              <div>${fechaFormateada}</div>
-              <div class="status-badge ${claseEstado}">${textoEstado}</div>
-            </td>
-          `;
-        };
-        
-        // Agregar celdas de fechas
-        row.innerHTML += crearCeldaFecha(sprinter.permiso);
-        row.innerHTML += crearCeldaFecha(sprinter.seguro);
-        row.innerHTML += crearCeldaFecha(sprinter.revision);
-        row.innerHTML += crearCeldaFecha(sprinter.certificado);
-        row.innerHTML += crearCeldaFecha(sprinter.sistema);
-        row.innerHTML += crearCeldaFecha(sprinter.seguro_terceros);
-        row.innerHTML += crearCeldaFecha(sprinter.decreto);
-        
-        // Estado general
-        let claseEstadoGeneral = '';
-        if (estadoGeneral === 'VENCIDO') {
-          claseEstadoGeneral = 'status-vencido';
-        } else if (estadoGeneral === 'PROXIMO') {
-          claseEstadoGeneral = 'status-proximo';
-        } else {
-          claseEstadoGeneral = 'status-vigente';
+        // Función para mostrar mensajes en el formulario
+        function showMessage(message, type = 'success') {
+            const messageDiv = document.getElementById('formMessage');
+            messageDiv.innerHTML = message;
+            messageDiv.className = `mt-2 alert alert-${type}`;
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+                messageDiv.className = 'mt-2';
+            }, type === 'danger' ? 10000 : 5000);
         }
-        
-        row.innerHTML += `
-          <td>
-            <div class="status-badge ${claseEstadoGeneral}">${estadoGeneral}</div>
-          </td>
-          <td>
-            <button class="btn btn-secondary btn-sm btn-editar" data-id="${sprinter.id}">
-              <i class="fas fa-edit"></i> Editar
-            </button>
-          </td>
-        `;
-        
-        tablaBody.appendChild(row);
-      });
-      
-      // Agregar eventos a los botones de editar
-      document.querySelectorAll('.btn-editar').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const id = parseInt(e.currentTarget.dataset.id);
-          abrirModalEditar(id);
-        });
-      });
-    }
 
-    // Modal de edición
-    const modal = document.getElementById('modal-editar');
-    const btnCancelar = document.getElementById('btn-cancelar');
-    const closeModal = document.querySelector('.close-modal');
-    const formEditar = document.getElementById('form-editar');
-
-    function abrirModalEditar(id) {
-      const sprinter = sprinters.find(s => s.id === id);
-      if (!sprinter) return;
-      
-      document.getElementById('edit-id').value = sprinter.id;
-      document.getElementById('edit-cto').value = sprinter.cto;
-      document.getElementById('edit-modelo').value = sprinter.modelo;
-      document.getElementById('edit-patente').value = sprinter.patente;
-      document.getElementById('edit-permiso').value = sprinter.permiso;
-      document.getElementById('edit-seguro').value = sprinter.seguro;
-      document.getElementById('edit-revision').value = sprinter.revision;
-      document.getElementById('edit-certificado').value = sprinter.certificado;
-      document.getElementById('edit-sistema').value = sprinter.sistema;
-      document.getElementById('edit-seguro-terceros').value = sprinter.seguro_terceros;
-      document.getElementById('edit-decreto').value = sprinter.decreto;
-      
-      modal.style.display = 'block';
-    }
-
-    function cerrarModal() {
-      modal.style.display = 'none';
-    }
-
-    // Eventos del modal
-    closeModal.addEventListener('click', cerrarModal);
-    btnCancelar.addEventListener('click', cerrarModal);
-
-    window.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        cerrarModal();
-      }
-    });
-
-    // Guardar cambios
-    formEditar.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      const id = parseInt(document.getElementById('edit-id').value);
-      const sprinterIndex = sprinters.findIndex(s => s.id === id);
-      
-      if (sprinterIndex !== -1) {
-        sprinters[sprinterIndex] = {
-          ...sprinters[sprinterIndex],
-          permiso: document.getElementById('edit-permiso').value,
-          seguro: document.getElementById('edit-seguro').value,
-          revision: document.getElementById('edit-revision').value,
-          certificado: document.getElementById('edit-certificado').value,
-          sistema: document.getElementById('edit-sistema').value,
-          seguro_terceros: document.getElementById('edit-seguro-terceros').value,
-          decreto: document.getElementById('edit-decreto').value
-        };
-        
-        renderizarTabla();
-        cerrarModal();
-        
-        // Mostrar mensaje de éxito
-        alert('Los cambios se guardaron correctamente');
-      }
-    });
-
-    // Filtros
-    function aplicarFiltros() {
-      const filtroCto = document.getElementById('filter-cto').value;
-      const filtroEstado = document.getElementById('filter-status').value;
-      const filtroBusqueda = document.getElementById('filter-search').value.toLowerCase();
-      
-      document.querySelectorAll('#tabla-body tr').forEach(row => {
-        const cto = row.cells[0].textContent;
-        const estado = row.cells[10].textContent;
-        const patente = row.cells[2].textContent.toLowerCase();
-        
-        const cumpleCto = !filtroCto || cto === filtroCto;
-        const cumpleEstado = !filtroEstado || estado === filtroEstado;
-        const cumpleBusqueda = !filtroBusqueda || patente.includes(filtroBusqueda);
-        
-        if (cumpleCto && cumpleEstado && cumpleBusqueda) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
+        // Función para cargar todos los registros
+        async function loadDocumentacion(searchParams = {}) {
+            const tableBody = document.getElementById('documentacionTableBody');
+            const searchSpinner = document.getElementById('searchSpinner');
+            
+            try {
+                // Verificar conexión antes de continuar
+                if (!isConnected) {
+                    await checkSupabaseConnection();
+                    if (!isConnected) {
+                        tableBody.innerHTML = '<tr><td colspan="11" class="text-center text-danger">Error de conexión con la base de datos</td></tr>';
+                        return;
+                    }
+                }
+                
+                searchSpinner.style.display = 'inline-block';
+                tableBody.innerHTML = '<tr><td colspan="11" class="text-center">Cargando datos...</td></tr>';
+                
+                let query = supabase.from('documentacion').select('*');
+                
+                // Aplicar filtros de búsqueda
+                if (searchParams.cto) {
+                    query = query.ilike('cto', `%${searchParams.cto}%`);
+                }
+                
+                if (searchParams.patente) {
+                    query = query.ilike('patente', `%${searchParams.patente}%`);
+                }
+                
+                // Aplicar filtro de vencimiento
+                if (searchParams.filterExpired === 'expired') {
+                    const today = new Date().toISOString().split('T')[0];
+                    query = query.or(
+                        `fecha_vencimiento_permiso_circulacion.lte.${today},seguro_vencimiento.lte.${today},revision_tecnica_vencimiento.lte.${today},certificado_operatividad_vencimiento.lte.${today},sistema_supresion_vencimiento.lte.${today},seguro_terceros_vencimiento.lte.${today},decreto_80_vencimiento.lte.${today}`
+                    );
+                } else if (searchParams.filterExpired === 'expiring') {
+                    const today = new Date();
+                    const in30Days = new Date(today);
+                    in30Days.setDate(today.getDate() + 30);
+                    const in30DaysStr = in30Days.toISOString().split('T')[0];
+                    const todayStr = today.toISOString().split('T')[0];
+                    
+                    query = query.or(
+                        `fecha_vencimiento_permiso_circulacion.gte.${todayStr},fecha_vencimiento_permiso_circulacion.lte.${in30DaysStr},` +
+                        `seguro_vencimiento.gte.${todayStr},seguro_vencimiento.lte.${in30DaysStr},` +
+                        `revision_tecnica_vencimiento.gte.${todayStr},revision_tecnica_vencimiento.lte.${in30DaysStr},` +
+                        `certificado_operatividad_vencimiento.gte.${todayStr},certificado_operatividad_vencimiento.lte.${in30DaysStr},` +
+                        `sistema_supresion_vencimiento.gte.${todayStr},sistema_supresion_vencimiento.lte.${in30DaysStr},` +
+                        `seguro_terceros_vencimiento.gte.${todayStr},seguro_terceros_vencimiento.lte.${in30DaysStr},` +
+                        `decreto_80_vencimiento.gte.${todayStr},decreto_80_vencimiento.lte.${in30DaysStr}`
+                    );
+                }
+                
+                const { data, error } = await query.order('cto', { ascending: true });
+                
+                if (error) throw error;
+                
+                displayDocumentacion(data);
+            } catch (error) {
+                console.error('Error al cargar documentación:', error);
+                tableBody.innerHTML = '<tr><td colspan="11" class="text-center text-danger">Error al cargar los datos: ' + error.message + '</td></tr>';
+            } finally {
+                searchSpinner.style.display = 'none';
+            }
         }
-      });
-    }
 
-    document.getElementById('filter-cto').addEventListener('change', aplicarFiltros);
-    document.getElementById('filter-status').addEventListener('change', aplicarFiltros);
-    document.getElementById('filter-search').addEventListener('input', aplicarFiltros);
+        // Función para mostrar los registros en la tabla
+        function displayDocumentacion(documentacion) {
+            const tableBody = document.getElementById('documentacionTableBody');
+            tableBody.innerHTML = '';
+            
+            if (documentacion.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="11" class="text-center">No se encontraron registros</td></tr>';
+                return;
+            }
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            documentacion.forEach(doc => {
+                const row = document.createElement('tr');
+                
+                // Resaltar filas con documentos vencidos o por vencer
+                const isExpired = [
+                    doc.fecha_vencimiento_permiso_circulacion,
+                    doc.seguro_vencimiento,
+                    doc.revision_tecnica_vencimiento,
+                    doc.certificado_operatividad_vencimiento,
+                    doc.sistema_supresion_vencimiento,
+                    doc.seguro_terceros_vencimiento,
+                    doc.decreto_80_vencimiento
+                ].some(dateStr => {
+                    if (!dateStr) return false;
+                    const date = new Date(dateStr);
+                    return date < today;
+                });
+                
+                const isExpiring = [
+                    doc.fecha_vencimiento_permiso_circulacion,
+                    doc.seguro_vencimiento,
+                    doc.revision_tecnica_vencimiento,
+                    doc.certificado_operatividad_vencimiento,
+                    doc.sistema_supresion_vencimiento,
+                    doc.seguro_terceros_vencimiento,
+                    doc.decreto_80_vencimiento
+                ].some(dateStr => {
+                    if (!dateStr) return false;
+                    const date = new Date(dateStr);
+                    const in30Days = new Date(today);
+                    in30Days.setDate(today.getDate() + 30);
+                    return date >= today && date <= in30Days;
+                });
+                
+                if (isExpired) {
+                    row.classList.add('highlight-expired');
+                } else if (isExpiring) {
+                    row.classList.add('highlight-warning');
+                }
+                
+                // Función auxiliar para formatear fechas con resaltado si está vencido
+                const formatDate = (dateStr) => {
+                    if (!dateStr) return '';
+                    
+                    const date = new Date(dateStr);
+                    const formattedDate = date.toLocaleDateString('es-CL');
+                    
+                    if (date < today) {
+                        return `<span class="text-danger">${formattedDate}</span>`;
+                    } else if (date <= new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)) {
+                        return `<span class="text-warning">${formattedDate}</span>`;
+                    }
+                    return formattedDate;
+                };
+                
+                row.innerHTML = `
+                    <td>${doc.cto}</td>
+                    <td>${doc.modelo || ''}</td>
+                    <td>${doc.patente || ''}</td>
+                    <td>${formatDate(doc.fecha_vencimiento_permiso_circulacion)}</td>
+                    <td>${formatDate(doc.seguro_vencimiento)}</td>
+                    <td>${formatDate(doc.revision_tecnica_vencimiento)}</td>
+                    <td>${formatDate(doc.certificado_operatividad_vencimiento)}</td>
+                    <td>${formatDate(doc.sistema_supresion_vencimiento)}</td>
+                    <td>${formatDate(doc.seguro_terceros_vencimiento)}</td>
+                    <td>${formatDate(doc.decreto_80_vencimiento)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning edit-btn" data-id="${doc.id}">Editar</button>
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="${doc.id}">Eliminar</button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Agregar event listeners a los botones de editar y eliminar
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => editDocumentacion(btn.dataset.id));
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => deleteDocumentacion(btn.dataset.id));
+            });
+        }
 
-    // Exportar a PDF
-    document.getElementById('btn-exportar').addEventListener('click', exportarPDF);
+        // Función para guardar un nuevo registro o actualizar uno existente
+        async function saveDocumentacion(event) {
+            event.preventDefault();
+            
+            const saveButton = document.getElementById('saveButton');
+            const saveSpinner = document.getElementById('saveSpinner');
+            const cto = document.getElementById('cto').value.trim();
+            
+            // Verificar conexión antes de continuar
+            if (!isConnected) {
+                await checkSupabaseConnection();
+                if (!isConnected) {
+                    showMessage('No se pudo conectar con la base de datos. Por favor verifica tu conexión a internet e intenta recargar la página.', 'danger');
+                    return;
+                }
+            }
+            
+            // Validación básica
+            if (!cto) {
+                showMessage('El campo CTO es obligatorio', 'danger');
+                return;
+            }
+            
+            const formData = {
+                cto: cto,
+                modelo: document.getElementById('modelo').value.trim() || null,
+                patente: document.getElementById('patente').value.trim() || null,
+                fecha_vencimiento_permiso_circulacion: document.getElementById('fecha_vencimiento_permiso_circulacion').value || null,
+                seguro_vencimiento: document.getElementById('seguro_vencimiento').value || null,
+                revision_tecnica_vencimiento: document.getElementById('revision_tecnica_vencimiento').value || null,
+                certificado_operatividad_vencimiento: document.getElementById('certificado_operatividad_vencimiento').value || null,
+                sistema_supresion_vencimiento: document.getElementById('sistema_supresion_vencimiento').value || null,
+                seguro_terceros_vencimiento: document.getElementById('seguro_terceros_vencimiento').value || null,
+                decreto_80_vencimiento: document.getElementById('decreto_80_vencimiento').value || null
+            };
+            
+            try {
+                saveButton.disabled = true;
+                saveSpinner.style.display = 'inline-block';
+                
+                if (currentEditId) {
+                    // Actualizar registro existente
+                    const { data, error } = await supabase
+                        .from('documentacion')
+                        .update(formData)
+                        .eq('id', currentEditId)
+                        .select();
+                    
+                    if (error) throw error;
+                    
+                    showMessage('Registro actualizado correctamente', 'success');
+                } else {
+                    // Crear nuevo registro
+                    const { data, error } = await supabase
+                        .from('documentacion')
+                        .insert([formData])
+                        .select();
+                    
+                    if (error) throw error;
+                    
+                    showMessage('Registro creado correctamente', 'success');
+                }
+                
+                // Limpiar formulario y recargar datos
+                resetForm();
+                loadDocumentacion();
+            } catch (error) {
+                console.error('Error al guardar documentación:', error);
+                showMessage('Error al guardar los datos: ' + error.message, 'danger');
+            } finally {
+                saveButton.disabled = false;
+                saveSpinner.style.display = 'none';
+            }
+        }
 
-    function exportarPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      
-      // Título
-      doc.setFontSize(18);
-      doc.text('Documentación Vehículos SPRINTER - HGT Tour', 105, 15, { align: 'center' });
-      
-      // Fecha de generación
-      const fecha = new Date().toLocaleDateString('es-CL');
-      doc.setFontSize(10);
-      doc.text(`Generado el: ${fecha}`, 105, 22, { align: 'center' });
-      
-      // Encabezados de la tabla
-      const headers = [
-        'CTO',
-        'Modelo',
-        'Patente',
-        'Permiso Circ.',
-        'Seguro',
-        'Rev. Técnica',
-        'Cert. Oper.',
-        'Sist. Supr.',
-        'Seg. Terceros',
-        'Decreto 80',
-        'Estatus'
-      ];
-      
-      // Datos de la tabla
-      const data = sprinters.map(sprinter => {
-        const estadoGeneral = determinarEstadoGeneral(sprinter);
-        
-        return [
-          sprinter.cto,
-          sprinter.modelo,
-          sprinter.patente,
-          formatDate(sprinter.permiso) + ` (${calcularDiasRestantes(sprinter.permiso).dias} días)`,
-          formatDate(sprinter.seguro) + ` (${calcularDiasRestantes(sprinter.seguro).dias} días)`,
-          formatDate(sprinter.revision) + ` (${calcularDiasRestantes(sprinter.revision).dias} días)`,
-          formatDate(sprinter.certificado) + ` (${calcularDiasRestantes(sprinter.certificado).dias} días)`,
-          formatDate(sprinter.sistema) + ` (${calcularDiasRestantes(sprinter.sistema).dias} días)`,
-          formatDate(sprinter.seguro_terceros) + ` (${calcularDiasRestantes(sprinter.seguro_terceros).dias} días)`,
-          formatDate(sprinter.decreto) + ` (${calcularDiasRestantes(sprinter.decreto).dias} días)`,
-          estadoGeneral
-        ];
-      });
-      
-      // Configuración de la tabla
-      doc.autoTable({
-        head: [headers],
-        body: data,
-        startY: 30,
-        styles: {
-          fontSize: 8,
-          cellPadding: 2,
-          overflow: 'linebreak'
-        },
-        headStyles: {
-          fillColor: [63, 114, 175],
-          textColor: 255,
-          fontStyle: 'bold'
-        },
-        alternateRowStyles: {
-          fillColor: [240, 240, 240]
-        },
-        columnStyles: {
-          0: { cellWidth: 15 },
-          1: { cellWidth: 30 },
-          2: { cellWidth: 20 },
-          3: { cellWidth: 25 },
-          4: { cellWidth: 25 },
-          5: { cellWidth: 25 },
-          6: { cellWidth: 25 },
-          7: { cellWidth: 25 },
-          8: { cellWidth: 25 },
-          9: { cellWidth: 25 },
-          10: { cellWidth: 20 }
-        },
-        margin: { left: 10, right: 10 }
-      });
-      
-      // Guardar el PDF
-      doc.save(`Documentacion_SPRINTER_${fecha.replace(/\//g, '-')}.pdf`);
-    }
+        // Función para editar un registro
+        async function editDocumentacion(id) {
+            try {
+                // Verificar conexión antes de continuar
+                if (!isConnected) {
+                    await checkSupabaseConnection();
+                    if (!isConnected) {
+                        showMessage('No se pudo conectar con la base de datos. Por favor verifica tu conexión a internet e intenta recargar la página.', 'danger');
+                        return;
+                    }
+                }
+                
+                const { data, error } = await supabase
+                    .from('documentacion')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                
+                if (error) throw error;
+                
+                // Llenar el formulario con los datos del registro
+                document.getElementById('id').value = data.id;
+                document.getElementById('cto').value = data.cto;
+                document.getElementById('modelo').value = data.modelo || '';
+                document.getElementById('patente').value = data.patente || '';
+                document.getElementById('fecha_vencimiento_permiso_circulacion').value = data.fecha_vencimiento_permiso_circulacion || '';
+                document.getElementById('seguro_vencimiento').value = data.seguro_vencimiento || '';
+                document.getElementById('revision_tecnica_vencimiento').value = data.revision_tecnica_vencimiento || '';
+                document.getElementById('certificado_operatividad_vencimiento').value = data.certificado_operatividad_vencimiento || '';
+                document.getElementById('sistema_supresion_vencimiento').value = data.sistema_supresion_vencimiento || '';
+                document.getElementById('seguro_terceros_vencimiento').value = data.seguro_terceros_vencimiento || '';
+                document.getElementById('decreto_80_vencimiento').value = data.decreto_80_vencimiento || '';
+                
+                currentEditId = data.id;
+                document.getElementById('cancelEdit').style.display = 'inline-block';
+                document.getElementById('cto').focus();
+                
+                showMessage('Editando registro ' + data.cto, 'info');
+            } catch (error) {
+                console.error('Error al cargar registro para edición:', error);
+                showMessage('Error al cargar el registro: ' + error.message, 'danger');
+            }
+        }
 
-    // Inicializar la tabla al cargar la página
-    document.addEventListener('DOMContentLoaded', () => {
-      renderizarTabla();
-    });
-  </script>
+        // Función para eliminar un registro
+        async function deleteDocumentacion(id) {
+            if (!confirm('¿Está seguro de que desea eliminar este registro?')) return;
+            
+            try {
+                // Verificar conexión antes de continuar
+                if (!isConnected) {
+                    await checkSupabaseConnection();
+                    if (!isConnected) {
+                        showMessage('No se pudo conectar con la base de datos. Por favor verifica tu conexión a internet e intenta recargar la página.', 'danger');
+                        return;
+                    }
+                }
+                
+                const { error } = await supabase
+                    .from('documentacion')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                showMessage('Registro eliminado correctamente', 'success');
+                loadDocumentacion();
+            } catch (error) {
+                console.error('Error al eliminar documentación:', error);
+                showMessage('Error al eliminar el registro: ' + error.message, 'danger');
+            }
+        }
+
+        // Función para limpiar el formulario
+        function resetForm() {
+            document.getElementById('documentacionForm').reset();
+            document.getElementById('id').value = '';
+            currentEditId = null;
+            document.getElementById('cancelEdit').style.display = 'none';
+        }
+
+        // Función para buscar registros
+        function searchDocumentacion() {
+            const searchParams = {
+                cto: document.getElementById('searchCto').value.trim(),
+                patente: document.getElementById('searchPatente').value.trim(),
+                filterExpired: document.getElementById('filterExpired').value
+            };
+            
+            loadDocumentacion(searchParams);
+        }
+
+        // Inicializar la aplicación
+        async function initApp() {
+            try {
+                // Inicializar Supabase
+                supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                console.log('Supabase inicializado');
+                
+                // Verificar conexión
+                await checkSupabaseConnection();
+                
+                // Cargar datos iniciales
+                if (isConnected) {
+                    loadDocumentacion();
+                }
+                
+                // Configurar event listeners
+                document.getElementById('documentacionForm').addEventListener('submit', saveDocumentacion);
+                document.getElementById('cancelEdit').addEventListener('click', resetForm);
+                document.getElementById('searchButton').addEventListener('click', searchDocumentacion);
+                document.getElementById('resetSearch').addEventListener('click', () => {
+                    document.getElementById('searchCto').value = '';
+                    document.getElementById('searchPatente').value = '';
+                    document.getElementById('filterExpired').value = 'all';
+                    loadDocumentacion();
+                });
+                
+            } catch (error) {
+                console.error('Error al inicializar la aplicación:', error);
+                showMessage('Error al inicializar la aplicación: ' + error.message, 'danger');
+            }
+        }
+
+        // Iniciar la aplicación cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
 </body>
 </html>
