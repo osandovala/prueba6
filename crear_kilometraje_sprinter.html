@@ -40,7 +40,7 @@
       background: white;
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
-      max-width: 900px;
+      max-width: 1200px;
       width: 100%;
       padding: 30px;
     }
@@ -174,6 +174,14 @@
       background: var(--color-accent);
     }
 
+    .btn-warning {
+      background: var(--color-warning);
+    }
+
+    .btn-warning:hover {
+      background: #e67e22;
+    }
+
     .btn-sm {
       padding: 8px 15px;
       font-size: 0.9rem;
@@ -240,6 +248,194 @@
       display: inline-block;
     }
 
+    /* Estilos para la lista de mantenimientos */
+    .lista-mantenimientos {
+      width: 100%;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+
+    .lista-mantenimientos table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      min-width: 1000px;
+    }
+
+    .lista-mantenimientos th, .lista-mantenimientos td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .lista-mantenimientos th {
+      background-color: var(--color-primary);
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    .lista-mantenimientos tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    .lista-mantenimientos tr:hover {
+      background-color: #e9ecef;
+    }
+
+    .acciones-cell {
+      display: flex;
+      gap: 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Estilos para el modal de impresión */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 900px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: black;
+    }
+
+    /* Estilos para el formato de impresión */
+    .print-format {
+      width: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    .print-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #000;
+      padding-bottom: 10px;
+    }
+
+    .print-logo {
+      max-width: 150px;
+      height: auto;
+    }
+
+    .print-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .print-section {
+      margin-bottom: 15px;
+    }
+
+    .print-section-title {
+      font-weight: bold;
+      background-color: #f0f0f0;
+      padding: 5px;
+      border-left: 4px solid var(--color-primary);
+    }
+
+    .print-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .print-table th {
+      background-color: #f0f0f0;
+      text-align: left;
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .print-table td {
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .print-row {
+      display: flex;
+      margin-bottom: 10px;
+    }
+
+    .print-col {
+      flex: 1;
+      padding: 5px;
+    }
+
+    .print-label {
+      font-weight: bold;
+    }
+
+    .print-signatures {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+    }
+
+    .print-signature {
+      text-align: center;
+      width: 200px;
+      border-top: 1px solid #000;
+      padding-top: 5px;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .printable, .printable * {
+        visibility: visible;
+      }
+      .printable {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 20px;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-format {
+        width: 100%;
+        font-size: 14px;
+      }
+      .print-table {
+        page-break-inside: avoid;
+      }
+    }
+
     @media (max-width: 768px) {
       .row {
         flex-direction: column;
@@ -253,133 +449,197 @@
         width: 100%;
         justify-content: center;
       }
+
+      .lista-mantenimientos th, .lista-mantenimientos td {
+        padding: 8px;
+        font-size: 0.9rem;
+      }
+
+      .acciones-cell {
+        flex-direction: column;
+      }
+
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
     }
   </style>
 </head>
 <body>
   <div class="form-container">
-    <h2>Registro de Mantenimiento por Kilometraje SPRINTER</h2>
-    
-    <div id="error-message" class="status-message error" style="display: none;"></div>
-    <div id="success-message" class="status-message success" style="display: none;"></div>
-
-    <div class="row">
-      <div class="col">
-        <label for="fecha" class="required-field">Fecha:</label>
-        <input type="date" id="fecha" value="2025-07-07" required>
-      </div>
-      <div class="col">
-        <label for="hora" class="required-field">Hora:</label>
-        <input type="time" id="hora" value="08:41" required>
-      </div>
-      <div class="col">
-        <label for="select-maquina" class="required-field">Máquina (Patente):</label>
-        <select id="select-maquina" required>
-          <option value="">Cargando...</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <label for="fecha-cierre" class="required-field">Fecha cierre entrega:</label>
-        <input type="date" id="fecha-cierre" value="2025-07-07" required>
-      </div>
-      <div class="col">
-        <label for="kilometraje" class="required-field">Kilometraje:</label>
-        <input type="number" id="kilometraje" value="0" min="0" required>
-      </div>
-      <div class="col">
-        <label for="tipo-mantenimiento" class="required-field">Tipo de Mantenimiento:</label>
-        <select id="tipo-mantenimiento" required onchange="mostrarPdf(this.value)">
-          <option value="">Seleccione...</option>
-          <option value="SM1">SM1</option>
-          <option value="SM2">SM2</option>
-          <option value="SM3">SM3</option>
-          <option value="SM4">SM4</option>
-        </select>
-        <div id="pdf-container" style="display: none;">
-          <button id="descargar-pdf-btn" class="btn btn-info btn-sm pdf-link">
-            <i class="fas fa-file-pdf"></i> Descargar PDF del Mantenimiento
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h3 class="section-title">Información del Mantenimiento</h3>
+    <!-- Formulario de mantenimiento (sección principal) -->
+    <div id="formulario-mantenimiento">
+      <h2 id="form-title">Registro de Mantenimiento por Kilometraje SPRINTER</h2>
       
+      <div id="error-message" class="status-message error" style="display: none;"></div>
+      <div id="success-message" class="status-message success" style="display: none;"></div>
+
+      <input type="hidden" id="mantenimiento-id">
+
       <div class="row">
         <div class="col">
-          <label for="responsable" class="required-field">Responsable:</label>
-          <select id="responsable" required>
-            <option value="">Seleccione</option>
-          </select>
+          <label for="fecha">Fecha:</label>
+          <input type="date" id="fecha">
         </div>
         <div class="col">
-          <label class="required-field">¿Realizado?</label>
-          <div class="radio-group">
-            <div class="radio-option">
-              <input type="radio" id="realizado-si" name="realizado" value="sí" required>
-              <label for="realizado-si">Sí</label>
+          <label for="hora">Hora:</label>
+          <input type="time" id="hora">
+        </div>
+        <div class="col">
+          <label for="select-maquina" class="required-field">Máquina (Patente):</label>
+          <select id="select-maquina" required>
+            <option value="">Cargando...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label for="fecha-cierre">Fecha cierre entrega:</label>
+          <input type="date" id="fecha-cierre">
+        </div>
+        <div class="col">
+          <label for="kilometraje">Kilometraje:</label>
+          <input type="number" id="kilometraje" value="0" min="0">
+        </div>
+        <div class="col">
+          <label for="tipo-mantenimiento">Tipo de Mantenimiento:</label>
+          <select id="tipo-mantenimiento">
+            <option value="">Seleccione...</option>
+            <option value="SM1">SM1</option>
+            <option value="SM2">SM2</option>
+            <option value="SM3">SM3</option>
+            <option value="SM4">SM4</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3 class="section-title">Información del Mantenimiento</h3>
+        
+        <div class="row">
+          <div class="col">
+            <label for="responsable">Responsable:</label>
+            <select id="responsable">
+              <option value="">Seleccione</option>
+            </select>
+          </div>
+          <div class="col">
+            <label>¿Realizado?</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" id="realizado-si" name="realizado" value="sí">
+                <label for="realizado-si">Sí</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="realizado-no" name="realizado" value="no" checked>
+                <label for="realizado-no">No</label>
+              </div>
             </div>
-            <div class="radio-option">
-              <input type="radio" id="realizado-no" name="realizado" value="no" checked>
-              <label for="realizado-no">No</label>
-            </div>
+          </div>
+        </div>
+
+        <label for="descripcion">Descripción de Mantenimiento:</label>
+        <textarea id="descripcion" rows="4"></textarea>
+        
+        <div class="row">
+          <div class="col">
+            <label for="hecho-por">Hecho por:</label>
+            <input type="text" id="hecho-por" value="Hugo Muñoz Sandoval">
+          </div>
+          <div class="col">
+            <label for="autorizado-por">Autorizado por:</label>
+            <select id="autorizado-por">
+              <option value="">Seleccione</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <label for="descripcion" class="required-field">Descripción de Mantenimiento:</label>
-      <textarea id="descripcion" rows="4" required></textarea>
-      
-      <div class="row">
-        <div class="col">
-          <label for="hecho-por" class="required-field">Hecho por:</label>
-          <input type="text" id="hecho-por" value="Hugo Muñoz Sandoval" readonly required>
-        </div>
-        <div class="col">
-          <label for="autorizado-por" class="required-field">Autorizado por:</label>
-          <select id="autorizado-por" required>
-            <option value="">Seleccione</option>
-          </select>
+      <div class="section">
+        <h3 class="section-title">Insumos/Materiales</h3>
+        
+        <table class="insumos-table">
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Cantidad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="insumos-body">
+            <!-- Insumos se agregarán aquí dinámicamente -->
+          </tbody>
+        </table>
+        
+        <div class="add-insumo">
+          <input type="text" id="nuevo-insumo" placeholder="Descripción del insumo">
+          <input type="number" id="cantidad-insumo" placeholder="Cantidad" min="1" value="1">
+          <button class="btn btn-success btn-sm" onclick="agregarInsumo()">
+            <i class="fas fa-plus"></i> Agregar
+          </button>
         </div>
       </div>
-    </div>
 
-    <div class="section">
-      <h3 class="section-title">Insumos/Materiales</h3>
-      
-      <table class="insumos-table">
-        <thead>
-          <tr>
-            <th>Descripción</th>
-            <th>Cantidad</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="insumos-body">
-          <!-- Insumos se agregarán aquí dinámicamente -->
-        </tbody>
-      </table>
-      
-      <div class="add-insumo">
-        <input type="text" id="nuevo-insumo" placeholder="Descripción del insumo">
-        <input type="number" id="cantidad-insumo" placeholder="Cantidad" min="1" value="1">
-        <button class="btn btn-success btn-sm" onclick="agregarInsumo()">
-          <i class="fas fa-plus"></i> Agregar
+      <div class="center">
+        <button id="btn-guardar" class="btn btn-primary" onclick="guardarMantenimiento()">
+          <i class="fas fa-save"></i> Guardar Mantenimiento
+        </button>
+        <button id="btn-cancelar" class="btn btn-secondary hidden" onclick="cancelarEdicion()">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button class="btn btn-info" onclick="mostrarListaMantenimientos()">
+          <i class="fas fa-list"></i> Ver Mantenimientos
         </button>
       </div>
     </div>
 
-    <div class="center">
-      <button class="btn btn-primary" onclick="guardarMantenimiento()">
-        <i class="fas fa-save"></i> Guardar Mantenimiento
-      </button>
-      <button class="btn btn-secondary" onclick="location.href='mantenimientos.html'">
-        <i class="fas fa-arrow-left"></i> Volver
-      </button>
+    <!-- Lista de mantenimientos (sección oculta inicialmente) -->
+    <div id="lista-mantenimientos" class="hidden">
+      <div class="center">
+        <h2>Listado de Mantenimientos por Kilometraje</h2>
+        <button class="btn btn-primary" onclick="mostrarFormulario()">
+          <i class="fas fa-plus"></i> Nuevo Mantenimiento
+        </button>
+      </div>
+
+      <div class="lista-mantenimientos">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Patente</th>
+              <th>Fecha</th>
+              <th>Tipo Mantenimiento</th>
+              <th>Kilometraje</th>
+              <th>Realizado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-mantenimientos">
+            <!-- Los mantenimientos se cargarán aquí -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para impresión -->
+  <div id="printModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal()">&times;</span>
+      <div id="print-content" class="print-format printable">
+        <!-- Contenido de impresión se cargará dinámicamente -->
+      </div>
+      <div class="center no-print">
+        <button class="btn btn-primary" onclick="window.print()">
+          <i class="fas fa-print"></i> Imprimir
+        </button>
+        <button class="btn btn-secondary" onclick="cerrarModal()">
+          <i class="fas fa-times"></i> Cerrar
+        </button>
+      </div>
     </div>
   </div>
 
@@ -390,6 +650,7 @@
 
     // Variables para insumos
     let insumos = [];
+    let editando = false;
 
     // Mostrar mensaje de error
     function mostrarError(mensaje) {
@@ -413,45 +674,12 @@
       }, 3000);
     }
 
-    // Mostrar opción para descargar PDF según el tipo de mantenimiento seleccionado
-    function mostrarPdf(tipoMantenimiento) {
-      const pdfContainer = document.getElementById('pdf-container');
-      const descargarPdfBtn = document.getElementById('descargar-pdf-btn');
-      
-      if (tipoMantenimiento) {
-        pdfContainer.style.display = 'block';
-        
-        // Configurar el botón de descarga
-        descargarPdfBtn.onclick = function() {
-          descargarPdf(tipoMantenimiento);
-        };
-      } else {
-        pdfContainer.style.display = 'none';
-      }
-    }
-
-    // Descargar PDF según el tipo de mantenimiento
-    function descargarPdf(tipoMantenimiento) {
-      // Nombre del archivo PDF basado en el tipo de mantenimiento
-      const nombreArchivo = `${tipoMantenimiento}.pdf`;
-      
-      // Crear un enlace temporal para la descarga
-      const link = document.createElement('a');
-      link.href = nombreArchivo;
-      link.download = nombreArchivo;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      mostrarExito(`PDF de ${tipoMantenimiento} descargado correctamente`);
-    }
-
     // Cargar patentes de máquinas
     async function cargarPatentes() {
       const selectMaquina = document.getElementById('select-maquina');
       const { data, error } = await supabase
         .from('maquinas')
-        .select('patente, id')
+        .select('patente, id, marca, modelo, fabricante')
         .order('patente', { ascending: true });
 
       if (error) {
@@ -466,8 +694,22 @@
         const opt = document.createElement('option');
         opt.value = maquina.id;
         opt.textContent = maquina.patente;
+        opt.dataset.marca = maquina.marca || '';
+        opt.dataset.modelo = maquina.modelo || '';
+        opt.dataset.fabricante = maquina.fabricante || '';
         selectMaquina.appendChild(opt);
       });
+
+      // Establecer fecha actual por defecto
+      const hoy = new Date();
+      document.getElementById('fecha').value = hoy.toISOString().split('T')[0];
+      document.getElementById('fecha-cierre').value = hoy.toISOString().split('T')[0];
+      
+      // Establecer hora actual por defecto
+      const ahora = new Date();
+      const horas = ahora.getHours().toString().padStart(2, '0');
+      const minutos = ahora.getMinutes().toString().padStart(2, '0');
+      document.getElementById('hora').value = `${horas}:${minutos}`;
     }
 
     // Cargar responsables (mecánicos)
@@ -580,9 +822,14 @@
       actualizarTablaInsumos();
     }
 
-    // Guardar mantenimiento
+    // Guardar mantenimiento (crear o actualizar)
     async function guardarMantenimiento() {
-      const maquinaId = document.getElementById('select-maquina').value;
+      const maquinaSelect = document.getElementById('select-maquina');
+      const maquinaId = maquinaSelect.value;
+      const patente = maquinaSelect.options[maquinaSelect.selectedIndex].text;
+      const marca = maquinaSelect.options[maquinaSelect.selectedIndex].dataset.marca;
+      const modelo = maquinaSelect.options[maquinaSelect.selectedIndex].dataset.modelo;
+      const fabricante = maquinaSelect.options[maquinaSelect.selectedIndex].dataset.fabricante;
       const fecha = document.getElementById('fecha').value;
       const hora = document.getElementById('hora').value;
       const fechaCierre = document.getElementById('fecha-cierre').value;
@@ -593,68 +840,393 @@
       const hechoPor = document.getElementById('hecho-por').value;
       const autorizadoPor = document.getElementById('autorizado-por').value;
       const tipoMantenimiento = document.getElementById('tipo-mantenimiento').value;
+      const mantenimientoId = document.getElementById('mantenimiento-id').value;
 
-      // Validaciones básicas
+      // Validación básica (solo patente es obligatoria)
       if (!maquinaId) {
-        mostrarError('Seleccione una máquina');
-        return;
-      }
-
-      if (!fecha || !fechaCierre) {
-        mostrarError('Complete las fechas requeridas');
-        return;
-      }
-
-      if (!tipoMantenimiento) {
-        mostrarError('Seleccione el tipo de mantenimiento (SM1, SM2, SM3 o SM4)');
-        return;
-      }
-
-      if (!responsable) {
-        mostrarError('Seleccione un responsable');
-        return;
-      }
-
-      if (!descripcion) {
-        mostrarError('Ingrese una descripción del mantenimiento');
+        mostrarError('Seleccione una máquina (patente)');
         return;
       }
 
       try {
-        const { data, error } = await supabase
-          .from('mantenimientos')
-          .insert([{
-            tipo: 'kilometraje',
-            tipo_mantenimiento: tipoMantenimiento,
-            maquina_id: maquinaId,
-            fecha: fecha,
-            hora: hora,
-            fecha_cierre: fechaCierre,
-            kilometraje: kilometraje,
-            responsable: responsable,
-            realizado: realizado === 'sí',
-            descripcion: descripcion,
-            hecho_por: hechoPor,
-            autorizado_por: autorizadoPor,
-            insumos: insumos
-          }])
-          .select();
+        let result;
+        const tipoMantencion = "Mantenimientos por Kilometraje"; // Valor fijo para el tipo
+        
+        if (editando && mantenimientoId) {
+          // Actualizar mantenimiento existente
+          const { data, error } = await supabase
+            .from('mantenimientos')
+            .update({
+              tipo: tipoMantencion,
+              tipo_mantenimiento: tipoMantenimiento,
+              maquina_id: maquinaId,
+              patente: patente,
+              marca: marca,
+              modelo: modelo,
+              fabricante: fabricante,
+              fecha: fecha,
+              hora: hora,
+              fecha_cierre: fechaCierre,
+              kilometraje: kilometraje,
+              responsable: responsable,
+              realizado: realizado === 'sí',
+              descripcion: descripcion,
+              hecho_por: hechoPor,
+              autorizado_por: autorizadoPor,
+              insumos: insumos,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', mantenimientoId)
+            .select();
 
-        if (error) throw error;
+          if (error) throw error;
+          result = data;
+          mostrarExito('Mantenimiento actualizado correctamente');
+        } else {
+          // Crear nuevo mantenimiento
+          const { data, error } = await supabase
+            .from('mantenimientos')
+            .insert([{
+              tipo: tipoMantencion,
+              tipo_mantenimiento: tipoMantenimiento,
+              maquina_id: maquinaId,
+              patente: patente,
+              marca: marca,
+              modelo: modelo,
+              fabricante: fabricante,
+              fecha: fecha,
+              hora: hora,
+              fecha_cierre: fechaCierre,
+              kilometraje: kilometraje,
+              responsable: responsable,
+              realizado: realizado === 'sí',
+              descripcion: descripcion,
+              hecho_por: hechoPor,
+              autorizado_por: autorizadoPor,
+              insumos: insumos
+            }])
+            .select();
 
-        mostrarExito('Mantenimiento por kilometraje guardado correctamente');
+          if (error) throw error;
+          result = data;
+          mostrarExito('Mantenimiento guardado correctamente');
+        }
         
         // Limpiar formulario
-        document.getElementById('descripcion').value = '';
-        document.getElementById('tipo-mantenimiento').value = '';
-        insumos = [];
-        actualizarTablaInsumos();
-        document.getElementById('pdf-container').style.display = 'none';
+        limpiarFormulario();
+        // Recargar la lista de mantenimientos
+        await cargarListaMantenimientos();
 
       } catch (error) {
         console.error('Error al guardar:', error);
         mostrarError('Error al guardar el mantenimiento: ' + error.message);
       }
+    }
+
+    // Limpiar el formulario
+    function limpiarFormulario() {
+      document.getElementById('mantenimiento-id').value = '';
+      document.getElementById('fecha').value = '';
+      document.getElementById('hora').value = '';
+      document.getElementById('fecha-cierre').value = '';
+      document.getElementById('kilometraje').value = '0';
+      document.getElementById('tipo-mantenimiento').value = '';
+      document.getElementById('responsable').value = '';
+      document.getElementById('realizado-no').checked = true;
+      document.getElementById('descripcion').value = '';
+      document.getElementById('hecho-por').value = 'Hugo Muñoz Sandoval';
+      document.getElementById('autorizado-por').value = '';
+      insumos = [];
+      actualizarTablaInsumos();
+      
+      // Restaurar valores por defecto
+      const hoy = new Date();
+      document.getElementById('fecha').value = hoy.toISOString().split('T')[0];
+      document.getElementById('fecha-cierre').value = hoy.toISOString().split('T')[0];
+      const ahora = new Date();
+      const horas = ahora.getHours().toString().padStart(2, '0');
+      const minutos = ahora.getMinutes().toString().padStart(2, '0');
+      document.getElementById('hora').value = `${horas}:${minutos}`;
+      
+      // Cambiar estado de edición
+      editando = false;
+      document.getElementById('form-title').textContent = 'Registro de Mantenimiento por Kilometraje SPRINTER';
+      document.getElementById('btn-guardar').innerHTML = '<i class="fas fa-save"></i> Guardar Mantenimiento';
+      document.getElementById('btn-cancelar').classList.add('hidden');
+    }
+
+    // Mostrar el formulario y ocultar la lista
+    function mostrarFormulario() {
+      document.getElementById('formulario-mantenimiento').classList.remove('hidden');
+      document.getElementById('lista-mantenimientos').classList.add('hidden');
+      limpiarFormulario();
+    }
+
+    // Mostrar la lista y ocultar el formulario
+    function mostrarListaMantenimientos() {
+      document.getElementById('formulario-mantenimiento').classList.add('hidden');
+      document.getElementById('lista-mantenimientos').classList.remove('hidden');
+      cargarListaMantenimientos();
+    }
+
+    // Cargar la lista de mantenimientos desde Supabase
+    async function cargarListaMantenimientos() {
+      const tabla = document.getElementById('tabla-mantenimientos');
+      tabla.innerHTML = '<tr><td colspan="7" style="text-align: center;">Cargando...</td></tr>';
+
+      const { data, error } = await supabase
+        .from('mantenimientos')
+        .select('*')
+        .order('fecha', { ascending: false });
+
+      if (error) {
+        console.error('Error al cargar mantenimientos:', error);
+        tabla.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Error al cargar los mantenimientos</td></tr>';
+        return;
+      }
+
+      tabla.innerHTML = '';
+
+      if (data.length === 0) {
+        tabla.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay mantenimientos registrados</td></tr>';
+        return;
+      }
+
+      data.forEach(mantenimiento => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${mantenimiento.id}</td>
+          <td>${mantenimiento.patente}</td>
+          <td>${mantenimiento.fecha}</td>
+          <td>${mantenimiento.tipo_mantenimiento}</td>
+          <td>${mantenimiento.kilometraje}</td>
+          <td>${mantenimiento.realizado ? 'Sí' : 'No'}</td>
+          <td class="acciones-cell">
+            <button class="btn btn-info btn-sm" onclick="verDetalleMantenimiento(${mantenimiento.id})">
+              <i class="fas fa-eye"></i> Ver
+            </button>
+            <button class="btn btn-warning btn-sm" onclick="editarMantenimiento(${mantenimiento.id})">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="eliminarMantenimiento(${mantenimiento.id})">
+              <i class="fas fa-trash-alt"></i> Eliminar
+            </button>
+          </td>
+        `;
+        tabla.appendChild(tr);
+      });
+    }
+
+    // Editar un mantenimiento existente
+    async function editarMantenimiento(id) {
+      const { data, error } = await supabase
+        .from('mantenimientos')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        mostrarError('Error al cargar el mantenimiento para editar');
+        return;
+      }
+
+      // Llenar el formulario con los datos del mantenimiento
+      document.getElementById('mantenimiento-id').value = data.id;
+      
+      // Seleccionar la máquina correcta
+      const selectMaquina = document.getElementById('select-maquina');
+      for (let i = 0; i < selectMaquina.options.length; i++) {
+        if (selectMaquina.options[i].value == data.maquina_id) {
+          selectMaquina.selectedIndex = i;
+          break;
+        }
+      }
+      
+      document.getElementById('fecha').value = data.fecha;
+      document.getElementById('hora').value = data.hora;
+      document.getElementById('fecha-cierre').value = data.fecha_cierre;
+      document.getElementById('kilometraje').value = data.kilometraje;
+      document.getElementById('tipo-mantenimiento').value = data.tipo_mantenimiento;
+      document.getElementById('responsable').value = data.responsable;
+      document.querySelector(`input[name="realizado"][value="${data.realizado ? 'sí' : 'no'}"]`).checked = true;
+      document.getElementById('descripcion').value = data.descripcion;
+      document.getElementById('hecho-por').value = data.hecho_por;
+      document.getElementById('autorizado-por').value = data.autorizado_por;
+      
+      // Cargar insumos
+      insumos = data.insumos || [];
+      actualizarTablaInsumos();
+
+      // Configurar estado de edición
+      editando = true;
+      document.getElementById('form-title').textContent = 'Editar Mantenimiento';
+      document.getElementById('btn-guardar').innerHTML = '<i class="fas fa-save"></i> Actualizar Mantenimiento';
+      document.getElementById('btn-cancelar').classList.remove('hidden');
+
+      // Mostrar el formulario
+      mostrarFormulario();
+    }
+
+    // Cancelar edición
+    function cancelarEdicion() {
+      limpiarFormulario();
+    }
+
+    // Ver detalles de un mantenimiento para impresión
+    async function verDetalleMantenimiento(id) {
+      const { data, error } = await supabase
+        .from('mantenimientos')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        mostrarError('Error al cargar el mantenimiento');
+        return;
+      }
+
+      const modal = document.getElementById('printModal');
+      const printContent = document.getElementById('print-content');
+      
+      // Construir el contenido de impresión similar al PDF
+      let html = `
+        <div class="print-header">
+          <img src="img/logo.png" class="print-logo" alt="Logo">
+          <div class="print-title">REGISTRO DE MANTENIMIENTO</div>
+        </div>
+
+        <div class="print-section">
+          <div class="print-section-title">DATOS GENERALES DE LA MÁQUINA / EQUIPO</div>
+          <div class="print-row">
+            <div class="print-col">
+              <span class="print-label">Máquina-Equipo:</span> ${data.patente}
+            </div>
+            <div class="print-col">
+              <span class="print-label">Marca:</span> ${data.marca || 'N/A'}
+            </div>
+          </div>
+          <div class="print-row">
+            <div class="print-col">
+              <span class="print-label">Modelo:</span> ${data.modelo || 'N/A'}
+            </div>
+            <div class="print-col">
+              <span class="print-label">Fabricante:</span> ${data.fabricante || 'N/A'}
+            </div>
+          </div>
+        </div>
+
+        <div class="print-section">
+          <div class="print-section-title">DATOS DEL MANTENIMIENTO</div>
+          <div class="print-row">
+            <div class="print-col">
+              <span class="print-label">Mantenimiento #</span> ${data.id}
+            </div>
+            <div class="print-col">
+              <span class="print-label">Fecha y hora inicio:</span> ${data.fecha} ${data.hora}
+            </div>
+          </div>
+          <div class="print-row">
+            <div class="print-col">
+              <span class="print-label">Tipo:</span> ${data.tipo_mantenimiento || 'N/A'}
+            </div>
+            <div class="print-col">
+              <span class="print-label">¿Realizado?</span> ${data.realizado ? 'REALIZADO' : 'NO REALIZADO'}
+            </div>
+          </div>
+          <div class="print-row">
+            <div class="print-col">
+              <span class="print-label">Responsable:</span> ${data.responsable || 'N/A'}
+            </div>
+            <div class="print-col">
+              <span class="print-label">KM:</span> ${data.kilometraje || '0'}
+            </div>
+          </div>
+        </div>
+
+        <div class="print-section">
+          <div class="print-section-title">DESCRIPCION DEL TRABAJO A REALIZAR</div>
+          <div style="padding: 10px;">
+            ${data.descripcion || 'Sin descripción'}
+          </div>
+        </div>
+
+        <div class="print-section">
+          <div class="print-section-title">INSUMOS / MATERIALES</div>
+          <table class="print-table">
+            <thead>
+              <tr>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      // Mostrar insumos si existen
+      if (data.insumos && data.insumos.length > 0) {
+        data.insumos.forEach(insumo => {
+          html += `
+            <tr>
+              <td>${insumo.descripcion}</td>
+              <td>${insumo.cantidad}</td>
+            </tr>
+          `;
+        });
+      } else {
+        html += `
+          <tr>
+            <td colspan="2" style="text-align: center;">No hay insumos registrados</td>
+          </tr>
+        `;
+      }
+
+      html += `
+            </tbody>
+          </table>
+        </div>
+
+        <div class="print-section">
+          <div class="print-section-title">FIRMAS</div>
+          <div class="print-signatures">
+            <div class="print-signature">
+              Elaborado por:<br>
+              ${data.hecho_por || ''}
+            </div>
+            <div class="print-signature">
+              Autorizado por:<br>
+              ${data.autorizado_por || ''}
+            </div>
+          </div>
+        </div>
+      `;
+
+      printContent.innerHTML = html;
+      modal.style.display = 'block';
+    }
+
+    // Cerrar el modal
+    function cerrarModal() {
+      document.getElementById('printModal').style.display = 'none';
+    }
+
+    // Eliminar un mantenimiento
+    async function eliminarMantenimiento(id) {
+      if (!confirm('¿Está seguro que desea eliminar este mantenimiento?')) {
+        return;
+      }
+
+      const { error } = await supabase
+        .from('mantenimientos')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        mostrarError('Error al eliminar el mantenimiento');
+        return;
+      }
+
+      mostrarExito('Mantenimiento eliminado correctamente');
+      cargarListaMantenimientos();
     }
 
     // Cargar datos al iniciar
@@ -664,6 +1236,14 @@
       cargarSupervisores();
       actualizarTablaInsumos();
     });
+
+    // Cerrar modal al hacer clic fuera del contenido
+    window.onclick = function(event) {
+      const modal = document.getElementById('printModal');
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
   </script>
 </body>
 </html>
